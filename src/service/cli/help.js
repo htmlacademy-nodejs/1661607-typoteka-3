@@ -1,12 +1,13 @@
 'use strict';
 
+const {gray} = require(`chalk`);
 const {Command} = require(`../../const`);
 
 
 exports.help = {
   name: Command.HELP,
   run() {
-    console.info(
+    console.info(gray(
         `
       Гайд:
       service.js <command>
@@ -15,7 +16,7 @@ exports.help = {
       --help:               печатает этот текст
       --generate <count>    формирует файл mocks.json
       `
-    )
+    ))
     ;
   }
 };
