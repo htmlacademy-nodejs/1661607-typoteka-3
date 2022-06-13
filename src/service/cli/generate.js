@@ -6,7 +6,7 @@ const {WRITE_FILE_NAME, Command} = require(`../../const`);
 
 
 exports.generate = {
-  name: Command.Generate,
+  name: Command.GENERATE,
   run(count) {
 
     const publicationList = JSON.stringify(createPublicationList(count));

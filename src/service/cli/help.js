@@ -4,7 +4,7 @@ const {Command} = require(`../../const`);
 
 
 exports.help = {
-  name: Command.Help,
+  name: Command.HELP,
   run() {
     console.info(
         `
