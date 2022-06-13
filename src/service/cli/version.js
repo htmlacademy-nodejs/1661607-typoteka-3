@@ -5,7 +5,7 @@ const {Command} = require(`../../const`);
 
 
 exports.version = {
-  name: Command.Version,
+  name: Command.VERSION,
   run() {
     return console.info(version);
   }

@@ -52,23 +52,23 @@ const CATEGORIES = [
 ];
 
 const ExitCode = {
-  Success: 0,
-  Error: 1,
+  SUCCESS: 0,
+  ERROR: 1,
 };
 
 const PublicationCount = {
-  Min: 1,
-  Max: 1000,
+  MIN: 1,
+  MAX: 1000,
 };
 
 const TextCount = {
-  Announce: 5,
-  FullText: 25,
-  Category: 4
+  ANNOUNCE: 5,
+  FULL_TEXT: 25,
+  CATEGORY: 4
 };
 
 const PublicationDate = {
-  MonthAgo: 3,
+  MONTH_AGO: 3,
 };
 
 const DATE_FORMAT = `YYYY-MM-DD HH:MM:ss`;
@@ -76,9 +76,9 @@ const DATE_FORMAT = `YYYY-MM-DD HH:MM:ss`;
 const WRITE_FILE_NAME = `mocks.json`;
 
 const Command = {
-  Version: `--version`,
-  Help: `--help`,
-  Generate: `--generate`
+  VERSION: `--version`,
+  HELP: `--help`,
+  GENERATE: `--generate`
 };
 
 module.exports = {
