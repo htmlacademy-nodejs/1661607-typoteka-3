@@ -1,5 +1,5 @@
 'use strict';
-
+const {red} = require(`chalk`);
 const {Cli} = require(`./cli`);
 const {ExitCode, Command, PublicationCount} = require(`../const`);
 
@@ -18,7 +18,7 @@ if (!userArguments.length || !Cli[userCommand] || userCommand === Command.HELP) 
 } else {
   const count = +userArguments.slice(1)[0] || PublicationCount.MIN;
   if (count > PublicationCount.MAX) {
-    console.error(`Не больше 1000 публикаций`);
+    console.error(red(`Не больше 1000 публикаций`));
     process.exit(ExitCode.ERROR);
   }
 
