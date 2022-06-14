@@ -3,14 +3,19 @@
 const {writeFile} = require(`fs`).promises;
 const {red, green} = require(`chalk`);
 const {createPublicationList} = require(`../../utils`);
-const {WRITE_FILE_NAME, Command} = require(`../../const`);
+const {WRITE_FILE_NAME, Command, PublicationCount, ExitCode} = require(`../../const`);
 
 
 exports.generate = {
   name: Command.GENERATE,
   async run(count) {
 
-    const publicationList = JSON.stringify(createPublicationList(count));
+    if (count && count > PublicationCount.MAX) {
+      console.error(red(`Не больше 1000 публикаций`));
+      process.exit(ExitCode.ERROR);
+    }
+
+    const publicationList = JSON.stringify(createPublicationList(count || 1));
 
     try {
       await writeFile(WRITE_FILE_NAME, publicationList);
