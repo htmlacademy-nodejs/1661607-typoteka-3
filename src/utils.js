@@ -1,10 +1,21 @@
 'use strict';
 
 const dayjs = require(`dayjs`);
+const {readFile} = require(`fs`).promises;
+const {PublicationDate, DATE_FORMAT, TextCount} = require(`./const`);
 
 
-const {PublicationDate, DATE_FORMAT, TITLES, TEXTS, TextCount, CATEGORIES} = require(`./const`);
+const FilePath = {
+  SENTENCES: `./data/sentences.txt`,
+  TITLES: `./data/titles.txt`,
+  CATEGORIES: `./data/categories.txt`,
+};
 
+
+const getTextListFromFile = async (path) => {
+  const content = await readFile(path, `utf-8`);
+  return content.trim().split(`\n`);
+};
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -25,40 +36,45 @@ const shuffle = (someArray) => {
 };
 
 
-const createTitle = () => TITLES[getRandomInt(1, TITLES.length - 1)];
+const createTitle = (titles) => titles[getRandomInt(1, titles.length - 1)];
 
 
-const createText = (maxLength) => shuffle(TEXTS).slice(0, getRandomInt(1, maxLength)).join(` `);
+const createText = (texts, maxLength) => shuffle(texts).slice(0, getRandomInt(1, maxLength)).join(` `);
 
 
-const createCategories = () => shuffle(CATEGORIES).slice(0, getRandomInt(1, TextCount.CATEGORY));
+const createCategories = (categories) => shuffle(categories).slice(0, getRandomInt(1, TextCount.CATEGORY));
 
 
-const getTheEarliestDare = () => Date.now() - PublicationDate.MONTH_AGO * 1000 * 60 * 60 * 24 * 30;
+const getTheEarliestDate = () => Date.now() - PublicationDate.MONTH_AGO * 1000 * 60 * 60 * 24 * 30;
 
 
 const createdRandomDate = () => {
   const lastStamp = Date.now();
-  const firstStamp = getTheEarliestDare();
-
+  const firstStamp = getTheEarliestDate();
   const randomDate = getRandomInt(lastStamp, firstStamp);
 
   return dayjs(randomDate).format(DATE_FORMAT);
 };
 
 
-const createPublication = () => {
-  const announce = createText(TextCount.ANNOUNCE);
-  const category = createCategories();
+const createPublication = ({titles, texts, categories}) => {
+  const announce = createText(texts, TextCount.ANNOUNCE);
+  const category = createCategories(categories);
   const createdDate = createdRandomDate();
-  const fullText = createText(TextCount.FULL_TEXT);
-  const title = createTitle();
+  const fullText = createText(texts, TextCount.FULL_TEXT);
+  const title = createTitle(titles);
 
   return {title, announce, fullText, createdDate, category};
 };
 
 
-const createPublicationList = (count) => Array(count).fill(null).map(createPublication);
+const createPublicationList = async (count) => {
+  const titles = await getTextListFromFile(FilePath.TITLES);
+  const texts = await getTextListFromFile(FilePath.SENTENCES);
+  const categories = await getTextListFromFile(FilePath.CATEGORIES);
+
+  return Array(count).fill(null).map(() => createPublication({titles, texts, categories}));
+};
 
 
 module.exports = {createPublicationList};

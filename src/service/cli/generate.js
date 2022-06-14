@@ -15,7 +15,10 @@ exports.generate = {
       process.exit(ExitCode.ERROR);
     }
 
-    const publicationList = JSON.stringify(createPublicationList(count || 1));
+    // const publicationListObject = await createPublicationList(count || 1);
+    // console.log(x, `x`);
+
+    const publicationList = JSON.stringify(await createPublicationList(count || 1));
 
     try {
       await writeFile(WRITE_FILE_NAME, publicationList);
