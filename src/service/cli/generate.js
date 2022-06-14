@@ -15,9 +15,6 @@ exports.generate = {
       process.exit(ExitCode.ERROR);
     }
 
-    // const publicationListObject = await createPublicationList(count || 1);
-    // console.log(x, `x`);
-
     const publicationList = JSON.stringify(await createPublicationList(count || 1));
 
     try {
