@@ -9,14 +9,9 @@ const USER_ARGV_INDEX = 2;
 
 const userArguments = process.argv.slice(USER_ARGV_INDEX);
 
-const [userCommand, param] = userArguments;
+const runCommand = (command) => Cli[command].run(userArguments);
 
-if (!userArguments.length || !Cli[userCommand] || userCommand === Command.HELP) {
-  Cli[Command.HELP].run();
-} else if (userCommand === Command.VERSION) {
-  Cli[userCommand].run();
-} else if (userCommand === Command.SERVER) {
-  Cli[userCommand].run(+param);
-} else {
-  Cli[userCommand].run(+param);
-}
+runCommand(Command.HELP);
+runCommand(Command.GENERATE);
+runCommand(Command.SERVER);
+runCommand(Command.VERSION);

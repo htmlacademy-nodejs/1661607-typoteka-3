@@ -8,7 +8,15 @@ const {WRITE_FILE_NAME, Command, PublicationCount, ExitCode} = require(`../../co
 
 exports.generate = {
   name: Command.GENERATE,
-  async run(count) {
+  async run(args) {
+
+    const [command, consoleCount] = args;
+
+    if (command !== Command.GENERATE) {
+      return;
+    }
+
+    const count = +consoleCount || 1;
 
     if (count && count > PublicationCount.MAX) {
       console.error(red(`Не больше 1000 публикаций`));
@@ -19,9 +27,10 @@ exports.generate = {
 
     try {
       await writeFile(WRITE_FILE_NAME, publicationList);
-      return console.info(green(`Operation success. File "${WRITE_FILE_NAME}" created.`));
+      console.info(green(`Operation success. File "${WRITE_FILE_NAME}" created.`));
     } catch (err) {
-      return console.error(red(`Can't write data to file... ${err}`));
+      console.error(red(`Can't write data to file... ${err}`));
+      process.exit(ExitCode.ERROR);
     }
   }
 };
