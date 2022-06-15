@@ -1,15 +1,9 @@
+
 'use strict';
 
 const dayjs = require(`dayjs`);
 const {readFile} = require(`fs`).promises;
-const {PublicationDate, DATE_FORMAT, TextCount} = require(`./const`);
-
-
-const FilePath = {
-  SENTENCES: `./data/sentences.txt`,
-  TITLES: `./data/titles.txt`,
-  CATEGORIES: `./data/categories.txt`,
-};
+const {PublicationDate, DATE_FORMAT, TextCount, FilePath} = require(`./const`);
 
 
 const getTextListFromFile = async (path) => {

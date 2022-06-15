@@ -27,9 +27,17 @@ const WRITE_FILE_NAME = `mocks.json`;
 const Command = {
   VERSION: `--version`,
   HELP: `--help`,
-  GENERATE: `--generate`
+  GENERATE: `--generate`,
+  SERVER: `--server`
+};
+
+const FilePath = {
+  SENTENCES: `./data/sentences.txt`,
+  TITLES: `./data/titles.txt`,
+  CATEGORIES: `./data/categories.txt`,
+  MOCKS: `./mocks.json`
 };
 
 module.exports = {
-  ExitCode, PublicationCount, TextCount, PublicationDate, DATE_FORMAT, WRITE_FILE_NAME, Command
+  ExitCode, PublicationCount, TextCount, PublicationDate, DATE_FORMAT, WRITE_FILE_NAME, Command, FilePath
 };

@@ -4,7 +4,8 @@
   "description": "Типотека",
   "main": "./src/service/service.js",
   "scripts": {
-    "start": "node ./src/service/service.js",
+    "start": "nodemon ./src/service/service.js --server",
+    "generate": "node ./src/service/service.js --generate",
     "test": "npm run eslint",
     "eslint": "eslint --ext .js src/"
   },
@@ -20,7 +21,8 @@
   "homepage": "https://github.com/gitSergeyhab/1661607-typoteka-3#readme",
   "devDependencies": {
     "eslint": "8.17.0",
-    "eslint-config-htmlacademy": "0.6.0"
+    "eslint-config-htmlacademy": "0.6.0",
+    "nodemon": "2.0.16"
   },
   "dependencies": {
     "chalk": "4.1.2",
