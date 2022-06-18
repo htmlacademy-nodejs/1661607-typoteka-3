@@ -8,15 +8,9 @@ const {WRITE_FILE_NAME, Command, PublicationCount, ExitCode} = require(`../../co
 
 exports.generate = {
   name: Command.GENERATE,
-  async run(args) {
+  async run(arg) {
 
-    const [command, consoleCount] = args;
-
-    if (command !== Command.GENERATE) {
-      return;
-    }
-
-    const count = +consoleCount || 1;
+    const count = +arg || 1;
 
     if (count && count > PublicationCount.MAX) {
       console.error(red(`Не больше 1000 публикаций`));

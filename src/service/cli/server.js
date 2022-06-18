@@ -57,15 +57,9 @@ const handleClientConnect = async (req, res) => {
 
 exports.server = {
   name: Command.SERVER,
-  run(args) {
+  run(arg) {
 
-    const [command, consolePort] = args;
-
-    if (command !== Command.SERVER) {
-      return;
-    }
-
-    const port = +consolePort || DEFAULT_PORT;
+    const port = +arg || DEFAULT_PORT;
 
     http.createServer(handleClientConnect)
       .listen(port)

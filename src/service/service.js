@@ -5,10 +5,14 @@ const {Command} = require(`../const`);
 
 
 const USER_ARGV_INDEX = 2;
+const DEFAULT_COMMAND = Command.HELP;
 
 
 const userArguments = process.argv.slice(USER_ARGV_INDEX);
+const [command, arg] = userArguments;
 
-const runCommand = (command) => Cli[command].run(userArguments);
-
-Object.values(Command).forEach(runCommand);
+if (Cli[command]) {
+  Cli[command].run(arg);
+} else {
+  Cli[DEFAULT_COMMAND].run();
+}

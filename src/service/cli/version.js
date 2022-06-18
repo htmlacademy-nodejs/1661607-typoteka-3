@@ -7,12 +7,7 @@ const {Command} = require(`../../const`);
 
 exports.version = {
   name: Command.VERSION,
-  run(args) {
-
-    const [command] = args;
-
-    if (command === Command.VERSION) {
-      console.info(blue(version));
-    }
+  run() {
+    console.info(blue(version));
   }
 };

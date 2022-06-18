@@ -6,12 +6,7 @@ const {Command} = require(`../../const`);
 
 exports.help = {
   name: Command.HELP,
-  run(args) {
-    const [command] = args;
-
-    if (Object.values(Command).includes(command) && command !== Command.HELP) {
-      return;
-    }
+  run() {
 
     console.info(gray(
         `
