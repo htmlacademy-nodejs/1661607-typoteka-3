@@ -71,4 +71,7 @@ const createPublicationList = async (count) => {
 };
 
 
-module.exports = {createPublicationList};
+const sendUrl = (req, res) => res.send(req.originalUrl);
+
+
+module.exports = {createPublicationList, sendUrl};

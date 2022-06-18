@@ -4,6 +4,7 @@
   "description": "Типотека",
   "main": "./src/service/service.js",
   "scripts": {
+    "start-front-server": "nodemon ./src/express/express.js",
     "start": "nodemon ./src/service/service.js --server",
     "generate": "node ./src/service/service.js --generate",
     "test": "npm run eslint",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "chalk": "4.1.2",
-    "dayjs": "1.11.3"
+    "dayjs": "1.11.3",
+    "express": "4.18.1"
   }
 }
