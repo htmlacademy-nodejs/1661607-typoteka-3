@@ -1,7 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {sendUrl} = require(`../../utils`);
+const {Template} = require(`../../const`);
+const {render} = require(`../../utils`);
 
 
 const MainRoute = {
@@ -14,10 +15,9 @@ const MainRoute = {
 
 const mainRouter = new Router();
 
-mainRouter.get(MainRoute.LOGIN, sendUrl);
-mainRouter.get(MainRoute.MAIN, sendUrl);
-mainRouter.get(MainRoute.REGISTER, sendUrl);
-mainRouter.get(MainRoute.SEARCH, sendUrl);
-
+mainRouter.get(MainRoute.LOGIN, render(Template.LOGIN));
+mainRouter.get(MainRoute.MAIN, render(Template.MAIN, {title: `Типотека`}));
+mainRouter.get(MainRoute.REGISTER, render(Template.SIGN_UP));
+mainRouter.get(MainRoute.SEARCH, render(Template.SEARCH));
 
 module.exports = mainRouter;

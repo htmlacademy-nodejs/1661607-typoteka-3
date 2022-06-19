@@ -1,7 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {sendUrl} = require(`../../utils`);
+const {Template} = require(`../../const`);
+const {render} = require(`../../utils`);
 
 
 const ArticleRoute = {
@@ -14,9 +15,9 @@ const ArticleRoute = {
 
 const articlesRouter = new Router();
 
-articlesRouter.get(ArticleRoute.CATEGORY, sendUrl);
-articlesRouter.get(ArticleRoute.ADD, sendUrl);
-articlesRouter.get(ArticleRoute.EDIT, sendUrl);
-articlesRouter.get(ArticleRoute.ID, sendUrl);
+articlesRouter.get(ArticleRoute.CATEGORY, render(Template.ARTICLES_BY_CATEGORY));
+articlesRouter.get(ArticleRoute.ADD, render(Template.POST));
+articlesRouter.get(ArticleRoute.EDIT, render(Template.POST));
+articlesRouter.get(ArticleRoute.ID, render(Template.POST_DETAIL));
 
 module.exports = articlesRouter;

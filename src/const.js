@@ -38,6 +38,20 @@ const FilePath = {
   MOCKS: `./mocks.json`
 };
 
+
+const Template = {
+  ARTICLES_BY_CATEGORY: `articles-by-category`,
+  POST: `post`,
+  POST_DETAIL: `post-detail`,
+  MY: `my`,
+  ALL_CATEGORIES: `all-categories`,
+  COMMENTS: `comments`,
+  MAIN: `main`,
+  SIGN_UP: `sign-up`,
+  LOGIN: `login`,
+  SEARCH: `search`
+};
+
 module.exports = {
-  ExitCode, PublicationCount, TextCount, PublicationDate, DATE_FORMAT, WRITE_FILE_NAME, Command, FilePath
+  Template, ExitCode, PublicationCount, TextCount, PublicationDate, DATE_FORMAT, WRITE_FILE_NAME, Command, FilePath
 };

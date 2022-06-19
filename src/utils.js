@@ -73,5 +73,7 @@ const createPublicationList = async (count) => {
 
 const sendUrl = (req, res) => res.send(req.originalUrl);
 
+const render = (template, content) => (req, res) => res.render(template, content);
 
-module.exports = {createPublicationList, sendUrl};
+
+module.exports = {createPublicationList, sendUrl, render};
