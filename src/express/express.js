@@ -18,8 +18,6 @@ const RootRoute = {
 
 
 const app = express();
-app.listen(PORT);
-
 
 app.set(`views`, path.join(__dirname, `templates`));
 app.set(`view engine`, `pug`);
@@ -30,4 +28,4 @@ app.use(RootRoute.ARTICLES, articlesRouter);
 app.use(RootRoute.MAIN, mainRouter);
 app.use(RootRoute.MY, myRouter);
 
-
+app.listen(PORT);

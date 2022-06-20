@@ -52,6 +52,12 @@ const Template = {
   SEARCH: `search`
 };
 
+const HttpCode = {
+  OK: 200,
+  NOT_FOUND: 404,
+};
+
+
 module.exports = {
-  Template, ExitCode, PublicationCount, TextCount, PublicationDate, DATE_FORMAT, WRITE_FILE_NAME, Command, FilePath
+  Template, ExitCode, PublicationCount, TextCount, PublicationDate, DATE_FORMAT, WRITE_FILE_NAME, Command, FilePath, HttpCode
 };
