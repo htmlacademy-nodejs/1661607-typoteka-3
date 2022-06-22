@@ -13,7 +13,8 @@ const PublicationCount = {
 const TextCount = {
   ANNOUNCE: 5,
   FULL_TEXT: 25,
-  CATEGORY: 4
+  CATEGORY: 4,
+  COMMENT: 5,
 };
 
 const PublicationDate = {
@@ -35,6 +36,7 @@ const FilePath = {
   SENTENCES: `./data/sentences.txt`,
   TITLES: `./data/titles.txt`,
   CATEGORIES: `./data/categories.txt`,
+  COMMENTS: `./data/comments.txt`,
   MOCKS: `./mocks.json`
 };
 

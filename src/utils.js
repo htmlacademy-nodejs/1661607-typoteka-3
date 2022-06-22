@@ -3,7 +3,12 @@
 
 const dayjs = require(`dayjs`);
 const {readFile} = require(`fs`).promises;
+const {nanoid} = require(`nanoid`);
 const {PublicationDate, DATE_FORMAT, TextCount, FilePath} = require(`./const`);
+
+
+const ID_LENGTH = 8;
+const COMMENT_COUNT = 5;
 
 
 const getTextListFromFile = async (path) => {
@@ -50,15 +55,22 @@ const createdRandomDate = () => {
   return dayjs(randomDate).format(DATE_FORMAT);
 };
 
+const createComment = (comments) => ({
+  id: nanoid(ID_LENGTH),
+  text: createText(comments, TextCount.COMMENT)
+});
 
-const createPublication = ({titles, texts, categories}) => {
+
+const createPublication = ({titles, texts, categories, commentList}) => {
+  const id = nanoid(ID_LENGTH);
   const announce = createText(texts, TextCount.ANNOUNCE);
   const category = createCategories(categories);
   const createdDate = createdRandomDate();
   const fullText = createText(texts, TextCount.FULL_TEXT);
   const title = createTitle(titles);
+  const comments = new Array(getRandomInt(1, COMMENT_COUNT)).fill(null).map(() => createComment(commentList));
 
-  return {title, announce, fullText, createdDate, category};
+  return {id, title, announce, fullText, createdDate, category, comments};
 };
 
 
@@ -66,8 +78,9 @@ const createPublicationList = async (count) => {
   const titles = await getTextListFromFile(FilePath.TITLES);
   const texts = await getTextListFromFile(FilePath.SENTENCES);
   const categories = await getTextListFromFile(FilePath.CATEGORIES);
+  const commentList = await getTextListFromFile(FilePath.COMMENTS);
 
-  return Array(count).fill(null).map(() => createPublication({titles, texts, categories}));
+  return Array(count).fill(null).map(() => createPublication({titles, texts, categories, commentList}));
 };
 
 
