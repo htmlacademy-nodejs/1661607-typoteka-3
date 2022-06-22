@@ -24,13 +24,9 @@ exports.server = {
   run(arg) {
 
     const port = +arg || DEFAULT_PORT;
-
-    app.listen(port, (err) => {
-      if (err) {
-        return console.error(red(`Ошибка при создании сервера`, err));
-      }
-      return console.info(green(`Ожидаю соединений на ${port}`));
-    });
+    app.listen(port)
+      .on(`listening`, () => console.info(green(`data server: Ожидаю соединений на ${port}`)))
+      .on(`error`, ({message}) => console.error(red(`data server: Ошибка при создании сервера, ${message}`)));
   }
 };
 

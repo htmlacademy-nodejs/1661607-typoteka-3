@@ -1,8 +1,9 @@
 'use strict';
 
 const express = require(`express`);
-
+const {red, green} = require(`chalk`);
 const path = require(`path`);
+
 const articlesRouter = require(`./routes/articles`);
 const mainRouter = require(`./routes/main`);
 const myRouter = require(`./routes/my`);
@@ -28,4 +29,6 @@ app.use(RootRoute.ARTICLES, articlesRouter);
 app.use(RootRoute.MAIN, mainRouter);
 app.use(RootRoute.MY, myRouter);
 
-app.listen(PORT);
+app.listen(PORT)
+  .on(`listening`, () => console.info(green(`front server: Ожидаю соединений на ${PORT}`)))
+  .on(`error`, ({message}) => console.error(red(`front server: Ошибка при создании сервера, ${message}`)));
