@@ -3,12 +3,13 @@
 const express = require(`express`);
 const {red, green} = require(`chalk`);
 const {Command} = require(`../../const`);
-const postsRouter = require(`./routes/posts`);
+// const postsRouter = require(`./routes/posts`);
+const apiRouter = require(`../api`);
 
 
-const Route = {
-  POSTS: `/posts`,
-};
+// const Route = {
+//   POSTS: `/posts`,
+// };
 
 const DEFAULT_PORT = 3000;
 
@@ -17,7 +18,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(Route.POSTS, postsRouter);
+app.use(`/api`, apiRouter);
 
 exports.server = {
   name: Command.SERVER,

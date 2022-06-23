@@ -56,10 +56,24 @@ const Template = {
 
 const HttpCode = {
   OK: 200,
+  CREATED: 201,
   NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500,
+  FORBIDDEN: 403,
+  UNAUTHORIZED: 401,
+  BAD_REQUEST: 400,
+};
+
+const ID_LENGTH = 8;
+
+const ServerRoute = {
+  ARTICLES: `/articles`,
+  CATEGORY: `/category`,
+  SEARCH: `/search`
 };
 
 
 module.exports = {
-  Template, ExitCode, PublicationCount, TextCount, PublicationDate, DATE_FORMAT, WRITE_FILE_NAME, Command, FilePath, HttpCode
+  ID_LENGTH, DATE_FORMAT, WRITE_FILE_NAME,
+  Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute
 };

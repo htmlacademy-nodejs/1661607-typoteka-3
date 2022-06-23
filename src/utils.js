@@ -4,10 +4,9 @@
 const dayjs = require(`dayjs`);
 const {readFile} = require(`fs`).promises;
 const {nanoid} = require(`nanoid`);
-const {PublicationDate, DATE_FORMAT, TextCount, FilePath} = require(`./const`);
+const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH} = require(`./const`);
 
 
-const ID_LENGTH = 8;
 const COMMENT_COUNT = 5;
 
 
@@ -68,7 +67,7 @@ const createPublication = ({titles, texts, categories, commentList}) => {
   const createdDate = createdRandomDate();
   const fullText = createText(texts, TextCount.FULL_TEXT);
   const title = createTitle(titles);
-  const comments = new Array(getRandomInt(1, COMMENT_COUNT)).fill(null).map(() => createComment(commentList));
+  const comments = new Array(getRandomInt(0, COMMENT_COUNT)).fill(null).map(() => createComment(commentList));
 
   return {id, title, announce, fullText, createdDate, category, comments};
 };
@@ -88,5 +87,7 @@ const sendUrl = (req, res) => res.send(req.originalUrl);
 
 const render = (template, content) => (req, res) => res.render(template, content);
 
+const checkFields = (needFields, fields) => needFields.every((field) => fields.includes(field));
 
-module.exports = {createPublicationList, sendUrl, render};
+
+module.exports = {createPublicationList, sendUrl, render, checkFields};
