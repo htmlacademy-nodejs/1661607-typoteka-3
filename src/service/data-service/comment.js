@@ -22,7 +22,6 @@ module.exports = class CommentService {
 
   drop(article, id) {
     const dropComment = article.comments.find((comment) => comment.id === id);
-    console.log(dropComment);
 
     if (!dropComment) {
       return null;

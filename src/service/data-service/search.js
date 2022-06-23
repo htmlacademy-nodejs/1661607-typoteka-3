@@ -10,5 +10,4 @@ module.exports = class SearchService {
   findAll(searchedText) {
     return this._articles.filter((article) => checkText(searchedText, article.title));
   }
-
 };

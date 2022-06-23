@@ -3,13 +3,8 @@
 const express = require(`express`);
 const {red, green} = require(`chalk`);
 const {Command} = require(`../../const`);
-// const postsRouter = require(`./routes/posts`);
 const apiRouter = require(`../api`);
 
-
-// const Route = {
-//   POSTS: `/posts`,
-// };
 
 const DEFAULT_PORT = 3000;
 
