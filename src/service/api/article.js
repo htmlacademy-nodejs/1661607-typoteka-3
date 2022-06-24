@@ -14,9 +14,9 @@ const ArticlesRoute = {
   COMMENT_BY_ID: `/:articleId/comments/:commentId`
 };
 
-const articleRouter = new Router();
 
 module.exports = (apiRouter, articleService, commentService) => {
+  const articleRouter = new Router();
 
   apiRouter.use(ServerRoute.ARTICLES, articleRouter);
 

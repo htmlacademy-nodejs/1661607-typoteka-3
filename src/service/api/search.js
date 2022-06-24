@@ -4,9 +4,9 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../const`);
 
 
-const searchRouter = new Router();
-
 module.exports = (apiRouter, service) => {
+
+  const searchRouter = new Router();
 
   apiRouter.use(`/search`, searchRouter);
 
