@@ -52,7 +52,7 @@ module.exports = (apiRouter, articleService, commentService) => {
     }
 
     const article = await articleService.update(articleId, oldArticle);
-    return res.status(HttpCode.CREATED).json(article);
+    return res.status(HttpCode.OK).json(article);
   }));
 
   articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, asyncHandlerWrapper(async (req, res) => {
@@ -75,7 +75,7 @@ module.exports = (apiRouter, articleService, commentService) => {
   articleRouter.post(ArticlesRoute.COMMENTS, [validateComment, addArticleToLocals(articleService)], asyncHandlerWrapper(async (req, res) => {
     const {article} = res.locals;
     const comments = await commentService.create(article, req.body);
-    return res.status(HttpCode.OK).json(comments);
+    return res.status(HttpCode.CREATED).json(comments);
   }));
 
   articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
