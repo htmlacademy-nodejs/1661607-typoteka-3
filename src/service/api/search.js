@@ -3,6 +3,7 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../const`);
 const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
+const logEachRequest = require(`../middleware/log-each-request`);
 
 
 module.exports = (apiRouter, service) => {
@@ -11,7 +12,7 @@ module.exports = (apiRouter, service) => {
 
   apiRouter.use(`/search`, searchRouter);
 
-  searchRouter.get(`/`, asyncHandlerWrapper(async (req, res) => {
+  searchRouter.get(`/`, logEachRequest, asyncHandlerWrapper(async (req, res) => {
     const {title} = req.query;
 
     if (!title) {
