@@ -72,8 +72,13 @@ const ServerRoute = {
   SEARCH: `/search`
 };
 
+const Env = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
+
 
 module.exports = {
   ID_LENGTH, DATE_FORMAT, WRITE_FILE_NAME,
-  Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute
+  Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env
 };

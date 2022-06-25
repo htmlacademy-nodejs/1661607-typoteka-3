@@ -5,8 +5,10 @@
   "main": "./src/service/service.js",
   "scripts": {
     "start-front-server": "nodemon ./src/express/express.js",
-    "start": "nodemon ./src/service/service.js --server",
+    "start": "cross-env NODE_ENV=production node ./src/service/service.js --server",
+    "start::debug": "cross-env NODE_ENV=development node ./src/service/service.js --server",
     "generate": "node ./src/service/service.js --generate",
+    "version": "node ./src/service/service.js --version",
     "test": "npm run eslint && npm run jest",
     "jest": "jest --watch all",
     "eslint": "eslint --ext .js src/"
