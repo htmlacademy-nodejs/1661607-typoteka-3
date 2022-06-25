@@ -4,6 +4,7 @@
 const {Router} = require(`express`);
 const {HttpCode, ServerRoute} = require(`../../const`);
 const addArticleToLocals = require(`../middleware/add-article-to-locals`);
+const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
 const validateArticle = require(`../middleware/validate-article`);
 const validateComment = require(`../middleware/validate-comment`);
 
@@ -20,12 +21,12 @@ module.exports = (apiRouter, articleService, commentService) => {
 
   apiRouter.use(ServerRoute.ARTICLES, articleRouter);
 
-  articleRouter.get(ArticlesRoute.MAIN, async (req, res) => {
+  articleRouter.get(ArticlesRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
     const articles = await articleService.findAll();
     return res.status(HttpCode.OK).json(articles);
-  });
+  }));
 
-  articleRouter.get(ArticlesRoute.ARTICLE_BY_ID, async (req, res) => {
+  articleRouter.get(ArticlesRoute.ARTICLE_BY_ID, asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.findOne(articleId);
 
@@ -34,14 +35,14 @@ module.exports = (apiRouter, articleService, commentService) => {
     }
 
     return res.status(HttpCode.OK).json(article);
-  });
+  }));
 
-  articleRouter.post(ArticlesRoute.MAIN, validateArticle, async (req, res) => {
+  articleRouter.post(ArticlesRoute.MAIN, validateArticle, asyncHandlerWrapper(async (req, res) => {
     const article = await articleService.create(req.body);
     return res.status(HttpCode.CREATED).json(article);
-  });
+  }));
 
-  articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, validateArticle, async (req, res) => {
+  articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, validateArticle, asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const oldArticle = req.body;
     const isOldArticle = articleService.findOne(articleId);
@@ -52,9 +53,9 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     const article = await articleService.update(articleId, oldArticle);
     return res.status(HttpCode.CREATED).json(article);
-  });
+  }));
 
-  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, async (req, res) => {
+  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const article = articleService.drop(articleId);
 
@@ -63,21 +64,21 @@ module.exports = (apiRouter, articleService, commentService) => {
     }
 
     return res.status(HttpCode.OK).json(article);
-  });
+  }));
 
-  articleRouter.get(ArticlesRoute.COMMENTS, addArticleToLocals(articleService), async (req, res) => {
+  articleRouter.get(ArticlesRoute.COMMENTS, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
     const {article} = res.locals;
     const comments = await commentService.findAll(article);
     return res.status(HttpCode.OK).json(comments);
-  });
+  }));
 
-  articleRouter.post(ArticlesRoute.COMMENTS, [validateComment, addArticleToLocals(articleService)], async (req, res) => {
+  articleRouter.post(ArticlesRoute.COMMENTS, [validateComment, addArticleToLocals(articleService)], asyncHandlerWrapper(async (req, res) => {
     const {article} = res.locals;
     const comments = await commentService.create(article, req.body);
     return res.status(HttpCode.OK).json(comments);
-  });
+  }));
 
-  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, addArticleToLocals(articleService), async (req, res) => {
+  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
 
     const {commentId} = req.params;
     const {article} = res.locals;
@@ -88,5 +89,5 @@ module.exports = (apiRouter, articleService, commentService) => {
     }
 
     return res.status(HttpCode.OK).json(comment);
-  });
+  }));
 };

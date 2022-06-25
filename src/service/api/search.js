@@ -2,6 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../const`);
+const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
 
 
 module.exports = (apiRouter, service) => {
@@ -10,7 +11,7 @@ module.exports = (apiRouter, service) => {
 
   apiRouter.use(`/search`, searchRouter);
 
-  searchRouter.get(`/`, async (req, res) => {
+  searchRouter.get(`/`, asyncHandlerWrapper(async (req, res) => {
     const {title} = req.query;
 
     if (!title) {
@@ -19,5 +20,5 @@ module.exports = (apiRouter, service) => {
 
     const articles = await service.findAll(title);
     return res.status(articles.length ? HttpCode.OK : HttpCode.NOT_FOUND).json(articles);
-  });
+  }));
 };
