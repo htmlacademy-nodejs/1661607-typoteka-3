@@ -11,7 +11,7 @@ const {ServerRoute, HttpCode} = require(`../../const`);
 
 
 const mockArticle = MOCK_ARTICLES[0];
-const commentsOfFirstArticleRout = `${ServerRoute.ARTICLES}/${mockArticle.id}/comments`
+const commentsOfFirstArticleRout = `${ServerRoute.ARTICLES}/${mockArticle.id}/comments`;
 const firstCommentOfFirstArticleRout = `${commentsOfFirstArticleRout}/${mockArticle.comments[0].id}`;
 const rotoArticle = {
   category: `new mock category`,
@@ -69,7 +69,7 @@ describe(`API returns an article with given id`, () => {
 
 describe(`API creates an article if data is valid`, () => {
 
-  const newArticle = {...rotoArticle}
+  const newArticle = {...rotoArticle};
   const app = createAPI();
   let response;
 
@@ -87,9 +87,8 @@ describe(`API creates an article if data is valid`, () => {
 
   test(`articles count is changed`, () => request(app)
     .get(ServerRoute.ARTICLES)
-    .expect((res) => expect(res.body.length).toBe(6))//5
+    .expect((res) => expect(res.body.length).toBe(6))// 5
   );
-
 });
 
 describe(`API refuses to create an article if data is invalid`, () => {
@@ -97,7 +96,7 @@ describe(`API refuses to create an article if data is invalid`, () => {
   const app = createAPI();
 
   test(`Without any required property response code is 400`, async () => {
-    const newArticle = {...rotoArticle}
+    const newArticle = {...rotoArticle};
     for (const key of Object.keys(newArticle)) {
       const badArticle = {...rotoArticle};
       delete badArticle[key];
@@ -112,7 +111,7 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
 describe(`API changes existent article`, () => {
 
-  const newArticle = {...rotoArticle}
+  const newArticle = {...rotoArticle};
   const app = createAPI();
   let response;
 
@@ -137,7 +136,7 @@ test(`API returns status code 404 when trying to change non-existent article`, (
 
   const app = createAPI();
 
-  const validArticle = {...rotoArticle}
+  const validArticle = {...rotoArticle};
 
   return request(app)
     .put(`${ServerRoute.ARTICLES}/FAKE_ID`)

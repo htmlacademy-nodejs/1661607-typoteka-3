@@ -29,7 +29,6 @@ app.use((err, _req, _res, _next) => {
 app.use((req, res, next) => {
   logger.debug(`Request on route ${req.url}`);
   res.on(`finish`, () => logger.info(`Response status code ${res.statusCode}`));
-  console.log(`1111`);
   next();
 });
 

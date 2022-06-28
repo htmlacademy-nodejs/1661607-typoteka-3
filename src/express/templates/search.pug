@@ -23,8 +23,10 @@ block headerContent
 block mainContent
   main
     section.search-page
-
-      include ./blocks/search-before
-
-      //- include ./blocks/search-list
-      //- include ./blocks/search-nothing
+      if articles
+        if articles.length
+          include ./blocks/search-list
+        else
+          include ./blocks/search-before
+      else
+        include ./blocks/search-nothing

@@ -1,5 +1,10 @@
 extends ./layouts/wrapper
 
+mixin createCategory(category, checked)
+  .new-publication__checkbox.new-publication__checkbox--auto
+    input(type='checkbox' id= category name='category' value= category checked= checked)
+    label(for= category)= category
+
 block headerContent
   include headers/header-admin
 
@@ -8,7 +13,7 @@ block mainContent
     section
       .popup.popup--new-publication.popup--anti
         .new-publication
-          form(action='#' method='POST')
+          form(action="/articles/add" method="post" enctype="multipart/form-data" autocomplete="off")
             .new-publication__header
               h1 Новая публикация
               .new-publication__date-form
@@ -23,7 +28,7 @@ block mainContent
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type='text' name='title' placeholder='Заголовок' required)
+                    input(type='text' name='title' placeholder='Заголовок' value= article.title required)
                 .form__field.form__field--post-image
                   label
                     input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly)
@@ -33,10 +38,12 @@ block mainContent
                       | Обзор
                 .new-publication__category-wrapper
                   a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
+                  each category in categories
+                    +createCategory(category.name, category.checked)
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='5' name='announcement' placeholder='Анонс публикации')
+                    textarea(rows='5' name='announce' placeholder='Анонс публикации')= article.announce
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='10' name='full-text' placeholder='Полный текст публикации')
+                    textarea(rows='10' name='fullText' placeholder='Полный текст публикации')= article.fullText

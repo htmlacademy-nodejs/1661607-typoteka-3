@@ -17,13 +17,20 @@ const RootRoute = {
   MY: `/my`,
 };
 
+const StaticDirName = {
+  PUBLIC: `public`,
+  UPLOAD: `upload`
+};
+
 
 const app = express();
 
 app.set(`views`, path.join(__dirname, `templates`));
 app.set(`view engine`, `pug`);
 
-app.use(express.static(path.resolve(__dirname, `public`)));
+app.use(express.static(path.resolve(__dirname, StaticDirName.PUBLIC)));
+app.use(express.static(path.resolve(__dirname, StaticDirName.UPLOAD)));
+
 
 app.use(RootRoute.ARTICLES, articlesRouter);
 app.use(RootRoute.MAIN, mainRouter);

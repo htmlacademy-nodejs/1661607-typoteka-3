@@ -13,6 +13,6 @@ const SearchArticleFragment = {
   NO_EXIST: `нет такого ---`
 };
 
-const CATEGORIES = [`Кино`, `Без рамки`, `Разное`, `IT`, `За жизнь`, `Музыка`, `Литература`,  `Программирование`, 'Black Metal']
+const CATEGORIES = [`Кино`, `Без рамки`, `Разное`, `IT`, `За жизнь`, `Музыка`, `Литература`, `Программирование`, `Black Metal`];
 
 module.exports = {MOCK_ARTICLES, SearchArticleFragment, CATEGORIES};

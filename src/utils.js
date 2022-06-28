@@ -45,18 +45,20 @@ const createCategories = (categories) => shuffle(categories).slice(0, getRandomI
 
 const getTheEarliestDate = () => Date.now() - PublicationDate.MONTH_AGO * 1000 * 60 * 60 * 24 * 30;
 
+const getFormatDate = (date) => dayjs(date).format(DATE_FORMAT);
 
 const createdRandomDate = () => {
   const lastStamp = Date.now();
   const firstStamp = getTheEarliestDate();
   const randomDate = getRandomInt(lastStamp, firstStamp);
 
-  return dayjs(randomDate).format(DATE_FORMAT);
+  return getFormatDate(randomDate);
 };
 
 const createComment = (comments) => ({
   id: nanoid(ID_LENGTH),
-  text: createText(comments, TextCount.COMMENT)
+  text: createText(comments, TextCount.COMMENT),
+  date: createdRandomDate()
 });
 
 
@@ -68,7 +70,6 @@ const createPublication = ({titles, texts, categories, commentList}) => {
   const fullText = createText(texts, TextCount.FULL_TEXT);
   const title = createTitle(titles);
   const comments = new Array(getRandomInt(0, COMMENT_COUNT)).fill(null).map(() => createComment(commentList));
-
   return {id, title, announce, fullText, createdDate, category, comments};
 };
 
@@ -90,4 +91,4 @@ const render = (template, content) => (req, res) => res.render(template, content
 const checkFields = (needFields, fields) => needFields.every((field) => fields.includes(field));
 
 
-module.exports = {createPublicationList, sendUrl, render, checkFields};
+module.exports = {createPublicationList, sendUrl, render, checkFields, getFormatDate};

@@ -20,8 +20,8 @@ describe(`SEARCH API: positive`, () => {
 
   test(`status.code === 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
   test(`2 article found`, () => expect(response.body.length).toBe(2));
-  test(`correct first article id`, () => expect(response.body[0].id).toBe('53LMgEGL'));
-  test(`correct first article title`, () => expect(response.body[0].title).toBe('Как достигнуть успеха не вставая с кресла'));
+  test(`correct first article id`, () => expect(response.body[0].id).toBe(`53LMgEGL`));
+  test(`correct first article title`, () => expect(response.body[0].title).toBe(`Как достигнуть успеха не вставая с кресла`));
 });
 
 describe(`SEARCH API: negative - not found`, () => {

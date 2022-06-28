@@ -69,6 +69,7 @@ const ID_LENGTH = 8;
 const ServerRoute = {
   ARTICLES: `/articles`,
   CATEGORY: `/category`,
+  CATEGORY_WITH_COUNT: `/category/with-count`,
   SEARCH: `/search`
 };
 

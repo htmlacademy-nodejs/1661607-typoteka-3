@@ -1,8 +1,8 @@
-
-
 'use strict';
 
-const ARTICLE_FIELDS = [`title`, `announce`, `fullText`, `category`, `comments`, `createdDate`];
+
+const ARTICLE_FIELDS = [`title`, `announce`, `fullText`, `category`, `createdDate`, `comments`];
+
 
 const {HttpCode} = require(`../../const`);
 const {checkFields} = require(`../../utils`);
@@ -14,6 +14,5 @@ module.exports = (req, res, next) => {
   if (!checkFields(ARTICLE_FIELDS, articleKeys)) {
     return res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
   }
-
   return next();
 };

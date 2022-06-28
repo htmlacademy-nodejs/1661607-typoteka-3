@@ -13,4 +13,9 @@ module.exports = (apiRouter, service) => {
     const categories = await service.findAll();
     return res.status(HttpCode.OK).json(categories);
   }));
+
+  categoryRouter.get(`/with-count`, logEachRequest, asyncHandlerWrapper(async (req, res) => {
+    const categories = await service.findAllWithCount();
+    return res.status(HttpCode.OK).json(categories);
+  }));
 };

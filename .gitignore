@@ -16,3 +16,6 @@ build/
 
 #
 mocks.json
+
+# Директория с загруженными файлами проекта
+src/express/upload
