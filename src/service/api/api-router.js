@@ -10,16 +10,15 @@ const search = require(`./search`);
 const getMockData = require(`../lib/get-mock-data`);
 
 
-const apiRouter = new Router();
-// "объявление роутера вноси внутрь функций, а то потом обожжешься на тестах"
-// тут так не выйдет?
-
 const runRouter = async () => {
+  const apiRouter = new Router();
   const mockData = await getMockData();
   category(apiRouter, new CategoryService(mockData));
   article(apiRouter, new ArticleService(mockData), new CommentService());
   search(apiRouter, new SearchService(mockData));
+  return apiRouter;
 };
 
-module.exports = {apiRouter, runRouter};
+module.exports = {runRouter};
+
 
