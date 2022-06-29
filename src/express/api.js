@@ -33,12 +33,8 @@ class API {
     return this._load(`${ServerRoute.ARTICLES}/${articleId}/comments`);
   }
 
-  getCategories() {
-    return this._load(ServerRoute.CATEGORY);
-  }
-
-  getCategoriesWithCount() {
-    return this._load(ServerRoute.CATEGORY_WITH_COUNT);
+  getCategories(count) {
+    return this._load(ServerRoute.CATEGORY, {params: {count}});
   }
 
   search(title) {
