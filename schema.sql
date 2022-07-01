@@ -1,3 +1,11 @@
+
+DROP TABLE IF EXISTS article_categories CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS articles CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
+
+
 CREATE TABLE categories (
   id  integer  PRIMARY KEY  GENERATED ALWAYS AS IDENTITY,
   name  varchar(63)  NOT NULL
@@ -20,8 +28,9 @@ CREATE TABLE articles (
   fullText  text  NOT NULL,
   createdDate  timestamp  DEFAULT current_timestamp,
   image  varchar(255)  NOT NULL,
-  user_id  integer  NOT NULL,
+  user_id  integer,
   FOREIGN KEY (user_id)  REFERENCES users(id)
+    ON DELETE SET NULL
 );
 
 CREATE INDEX ON articles(title);
@@ -31,9 +40,11 @@ CREATE TABLE comments (
   text  text  NOT NULL,
   createdDate  timestamp  DEFAULT current_timestamp,
   article_id  integer  NOT NULL,
-  user_id  integer  NOT NULL,
-  FOREIGN KEY (article_id)  REFERENCES articles(id),
+  user_id  integer,
+  FOREIGN KEY (article_id)  REFERENCES articles(id)
+    ON DELETE CASCADE,
   FOREIGN KEY (user_id)  REFERENCES users(id)
+    ON DELETE SET NULL
 );
 
 CREATE TABLE article_categories (
