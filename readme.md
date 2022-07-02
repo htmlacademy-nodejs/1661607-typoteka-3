@@ -50,3 +50,11 @@ git clone SSH-адрес_вашего_форка
 
 [travis-image]: https://travis-ci.com/htmlacademy-nodejs/1661607-typoteka-3.svg?branch=master
 [travis-url]: https://travis-ci.com/htmlacademy-nodejs/1661607-typoteka-3
+
+
+
+# 2 и 3 части задания сделаны вместе с 1-й:
+# 1. /schema.sql
+# 2. /fil-bd.sql
+# 3. /queries.sql
+# без их сдачи не пускает к выполнению следующего модуля
