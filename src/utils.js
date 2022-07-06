@@ -4,7 +4,7 @@
 const dayjs = require(`dayjs`);
 const {readFile} = require(`fs`).promises;
 const {nanoid} = require(`nanoid`);
-const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH} = require(`./const`);
+const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode} = require(`./const`);
 
 
 const COMMENT_COUNT = 5;
@@ -24,6 +24,7 @@ const getRandomInt = (min, max) => {
 
 
 const shuffle = (someArray) => {
+  // console.log(someArray);
   const copiedArray = [...someArray];
   for (let i = copiedArray.length - 1; i > 0; i--) {
     const randomPosition = Math.floor(Math.random() * i);
@@ -84,11 +85,27 @@ const createPublicationList = async (count) => {
 };
 
 
-const sendUrl = (req, res) => res.send(req.originalUrl);
-
 const render = (template, content) => (req, res) => res.render(template, content);
 
 const checkFields = (needFields, fields) => needFields.every((field) => fields.includes(field));
 
 
-module.exports = {createPublicationList, sendUrl, render, checkFields, getFormatDate};
+const connectToDB = async (sequelize, logger) => {
+  try {
+    logger.info(`trying to connect to DB`);
+    await sequelize.authenticate();
+    logger.info(`success connection to DB`);
+  } catch (err) {
+    logger.error(`cannot connect to DB, error: ${err.message}`);
+    process.exit(ExitCode.ERROR);
+  }
+};
+
+
+module.exports = {
+  shuffle, getRandomInt,
+  createText, createTitle, getTextListFromFile,
+  render,
+  checkFields, getFormatDate,
+  connectToDB,
+};

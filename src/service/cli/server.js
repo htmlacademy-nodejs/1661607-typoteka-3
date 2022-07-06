@@ -5,8 +5,9 @@ const {red, green} = require(`chalk`);
 const {getLogger} = require(`../lib/logger`);
 const sequelize = require(`../lib/sequelize`);
 
-const {Command, HttpCode, ExitCode} = require(`../../const`);
+const {Command, HttpCode} = require(`../../const`);
 const {runRouter} = require(`../api`);
+const {connectToDB} = require(`../../utils`);
 
 
 const DEFAULT_PORT = 3000;
@@ -16,16 +17,10 @@ exports.server = {
   name: Command.SERVER,
   async run(arg) {
 
+
     const logger = getLogger({name: `api`});
 
-    try {
-      logger.info(`trying to connect to DB`);
-      await sequelize.authenticate();
-      logger.info(`success connection to DB`);
-    } catch (err) {
-      logger.error(`cannot connect to DB, error: ${err.message}`);
-      process.exit(ExitCode.ERROR);
-    }
+    await connectToDB(sequelize, logger);
 
     const app = express();
 

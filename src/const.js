@@ -29,7 +29,8 @@ const Command = {
   VERSION: `--version`,
   HELP: `--help`,
   GENERATE: `--generate`,
-  SERVER: `--server`
+  SERVER: `--server`,
+  FILL_DB: `--fillDB`
 };
 
 const FilePath = {
@@ -77,8 +78,16 @@ const Env = {
   PRODUCTION: `production`
 };
 
+const Aliase = {
+  CATEGORIES: `categories`,
+  COMMENTS: `comments`,
+  ARTICLES: `articles`,
+  ARTICLE_CATEGORIES: `articleCategories`
+};
+
 
 module.exports = {
   ID_LENGTH, DATE_FORMAT, WRITE_FILE_NAME,
-  Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env
+  Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env,
+  Aliase
 };
