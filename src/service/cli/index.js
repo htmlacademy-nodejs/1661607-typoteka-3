@@ -14,5 +14,4 @@ exports.Cli = {
   [help.name]: help,
   [server.name]: server,
   [fillDB.name]: fillDB
-
 };

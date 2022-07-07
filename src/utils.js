@@ -42,6 +42,7 @@ const createText = (texts, maxLength) => shuffle(texts).slice(0, getRandomInt(1,
 
 
 const createCategories = (categories) => shuffle(categories).slice(0, getRandomInt(1, TextCount.CATEGORY));
+const createRandomArray = (array, maxCount) => shuffle(array).slice(0, getRandomInt(1, maxCount));
 
 
 const getTheEarliestDate = () => Date.now() - PublicationDate.MONTH_AGO * 1000 * 60 * 60 * 24 * 30;
@@ -104,7 +105,8 @@ const connectToDB = async (sequelize, logger) => {
 
 module.exports = {
   shuffle, getRandomInt,
-  createText, createTitle, getTextListFromFile,
+  createPublicationList,
+  createText, createTitle, getTextListFromFile, createRandomArray,
   render,
   checkFields, getFormatDate,
   connectToDB,
