@@ -1,31 +1,54 @@
 'use strict';
 
-const getCategoryWithCount = (categories) => {
-  return categories.reduce((acc, category) => {
-    if (acc[category]) {
-      return {...acc, [category]: acc[category] + 1};
-    } else {
-      return {...acc, [category]: 1};
-    }
-  }, {});
-};
-
-const getCategoryArrayFromDict = (category) => Object.keys(category).map((item) => ({name: item, count: category[item]}));
+const Sequelize = require(`sequelize`);
+const {Aliase} = require(`../../const`);
 
 
 module.exports = class CategoryService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Category = sequelize.models.Category;
+    this._ArticleCategories = sequelize.models.ArticleCategories;
   }
 
-  findAll() {
-    const categories = this._articles.reduce((acc, article) => ([...acc, ...article.category]), []);
-    return [...new Set(categories)];
+  async create(category) {
+    return await this._Category.create(category);
   }
 
-  findAllWithCount() {
-    const categories = this._articles.reduce((acc, article) => ([...acc, ...article.category]), []);
-    const categoryObj = getCategoryWithCount(categories);
-    return getCategoryArrayFromDict(categoryObj);
+  async findAll() {
+    return await this._Category.findAll({row: true});
+  }
+
+  async findAllWithCount() {
+
+    const result = await this._Category.findAll({
+      attributes: [
+        `id`,
+        `name`,
+        [
+          Sequelize.fn(
+              `COUNT`,
+              `*`
+          ),
+          `count`
+        ]
+      ],
+      group: [Sequelize.col(`Category.id`)],
+      include: [{
+        model: this._ArticleCategories,
+        as: Aliase.ARTICLE_CATEGORIES,
+        attributes: []
+      }]
+    });
+
+    return result.map((it) => it.get());
+  }
+
+
+  async drop(id) {
+    const category = await this._Category.destroy({
+      where: {id}
+    });
+
+    return !!category;
   }
 };

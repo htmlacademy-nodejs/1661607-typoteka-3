@@ -18,7 +18,7 @@ mixin createPreviewArticle(title, announce, category, comments, createdDate)
   li.preview__item
     ul.preview__breadcrumbs
       each item of category
-        +createPreviewCategory(item)
+        +createPreviewCategory(item.name)
     .preview__background
       img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
     time.preview__time(datetime='2019-03-21T20:33')= createdDate
@@ -80,7 +80,7 @@ block mainContent
         h2.visually-hidden Список превью статей
         ul.preview__list
           each article of articles
-            +createPreviewArticle(article.title, article.announce, article.category, article.comments, article.createdDate)
+            +createPreviewArticle(article.title, article.announce, article.categories, article.comments, article.createdDate)
 
           //- li.preview__item.preview__item--noimage
           //-   ul.preview__breadcrumbs

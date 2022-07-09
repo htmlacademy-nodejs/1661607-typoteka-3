@@ -10,6 +10,8 @@ module.exports = (apiRouter, service) => {
   apiRouter.use(ServerRoute.CATEGORY, categoryRouter);
   categoryRouter.get(`/`, asyncHandlerWrapper(async (req, res) => {
     const {count} = req.query;
+
+
     const categories = count ? await service.findAllWithCount() : await service.findAll();
     return res.status(HttpCode.OK).json(categories);
   }));

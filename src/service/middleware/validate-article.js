@@ -1,7 +1,7 @@
 'use strict';
 
 
-const ARTICLE_FIELDS = [`title`, `announce`, `fullText`, `category`, `createdDate`, `comments`];
+const ARTICLE_FIELDS = [`title`, `announce`, `fullText`, `category`];
 
 
 const {HttpCode} = require(`../../const`);

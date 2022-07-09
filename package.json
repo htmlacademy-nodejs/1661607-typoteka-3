@@ -5,10 +5,9 @@
   "main": "./src/service/service.js",
   "scripts": {
     "start-front-server": "nodemon ./src/express/express.js",
-    "start": "cross-env NODE_ENV=production node -r dotenv/config ./src/service/service.js --server",
-    "start::debug": "cross-env NODE_ENV=development nodemon -r dotenv/config ./src/service/service.js --server",
-    "generate": "node ./src/service/service.js --generate",
-    "filldb": "node -r dotenv/config ./src/service/service.js --fillDB",
+    "start": "cross-env NODE_ENV=production NODE_DB=true node -r dotenv/config ./src/service/service.js --server",
+    "start::debug": "cross-env NODE_ENV=development NODE_DB=true nodemon -r dotenv/config ./src/service/service.js --server",
+    "filldb": "cross-env NODE_DB=true node -r dotenv/config  ./src/service/service.js --fillDB",
 
     "version": "node ./src/service/service.js --version",
     "test": "npm run eslint && npm run jest",

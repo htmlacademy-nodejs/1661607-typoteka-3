@@ -45,7 +45,7 @@ class API {
     return this._load(ServerRoute.ARTICLES, {method: `POST`, data});
   }
 
-  getAllComments(articleId) {
+  getCommentsByArticleId(articleId) {
     return this._load(`${ServerRoute.ARTICLES}/${articleId}/comments`);
   }
 }

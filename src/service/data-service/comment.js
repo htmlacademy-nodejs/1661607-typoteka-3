@@ -1,34 +1,37 @@
 'use strict';
 
-const {nanoid} = require(`nanoid`);
-const {ID_LENGTH} = require(`../../const`);
-
 
 module.exports = class CommentService {
 
-  create(article, comment) {
-    const newComment = {...comment, id: nanoid(ID_LENGTH)};
-    article.comments.push(newComment);
-    return newComment;
+  constructor(sequelize) {
+    this._Comment = sequelize.models.Comment;
+    this._Article = sequelize.models.Article;
   }
 
-  findAll(article) {
-    return article.comments;
+  async create(articleId, comment) {
+    // return await this._Comment.create({...comment, articleId}); //?? а почемку не так ??
+    const article = await this._Article.findByPk(articleId);
+    return article.createComment(comment);
   }
 
-  findOne(article, id) {
-    return article.comments.find((comment) => comment.id === id);
+  async findOne(id) {
+    return await this._Comment.findByPk(id);
   }
 
-  drop(article, id) {
-    const dropComment = article.comments.find((comment) => comment.id === id);
+  async findAll(article) {
+    return await this._Comment.findAll({
+      where: {
+        articleId: article.id
+      },
+      order: [[`createdAt`, `ASC`]]
+    });
+  }
 
-    if (!dropComment) {
-      return null;
-    }
+  async drop(id) {
+    const comment = await this._Comment.destroy({
+      where: {id}
+    });
 
-    const comments = article.comments.filter((comment) => comment.id !== id);
-    article.comments = comments;
-    return dropComment;
+    return !!comment;
   }
 };

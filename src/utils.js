@@ -24,7 +24,6 @@ const getRandomInt = (min, max) => {
 
 
 const shuffle = (someArray) => {
-  // console.log(someArray);
   const copiedArray = [...someArray];
   for (let i = copiedArray.length - 1; i > 0; i--) {
     const randomPosition = Math.floor(Math.random() * i);
@@ -48,6 +47,7 @@ const createRandomArray = (array, maxCount) => shuffle(array).slice(0, getRandom
 const getTheEarliestDate = () => Date.now() - PublicationDate.MONTH_AGO * 1000 * 60 * 60 * 24 * 30;
 
 const getFormatDate = (date) => dayjs(date).format(DATE_FORMAT);
+const getDate = (date, format) => dayjs(date).format(format);
 
 const createdRandomDate = () => {
   const lastStamp = Date.now();
@@ -108,6 +108,6 @@ module.exports = {
   createPublicationList,
   createText, createTitle, getTextListFromFile, createRandomArray,
   render,
-  checkFields, getFormatDate,
+  checkFields, getFormatDate, getDate,
   connectToDB,
 };

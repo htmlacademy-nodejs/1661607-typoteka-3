@@ -38,8 +38,10 @@ block mainContent
                       | Обзор
                 .new-publication__category-wrapper
                   a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
+
                   each category in categories
                     +createCategory(category.name, category.checked)
+                    
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label

@@ -18,8 +18,10 @@ const mainRouter = new Router();
 
 mainRouter.get(MainRoute.LOGIN, render(Template.LOGIN));
 mainRouter.get(MainRoute.MAIN, async (req, res) => {
+
   const categories = await api.getCategories(true);
   const articles = await api.getAllArticles();
+
   res.render(Template.MAIN, {title: `Типотека`, articles, categories});
 });
 

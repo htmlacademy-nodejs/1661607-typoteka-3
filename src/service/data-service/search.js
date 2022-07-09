@@ -1,13 +1,24 @@
 'use strict';
 
-const checkText = (needText, text) => text.toUpperCase().includes(needText.toUpperCase());
+const {Op} = require(`sequelize`);
+
 
 module.exports = class SearchService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
   }
 
-  findAll(searchedText) {
-    return this._articles.filter((article) => checkText(searchedText, article.title));
+  async findAll(searchedText) {
+
+    const articles = await this._Article.findAll({
+      where: {
+        title: {
+          [Op.iLike]: `%${searchedText}%` // ??? почему-то не работает регистронезависимость
+        }
+      },
+      order: [[`createdAt`, `DESC`]]
+    });
+
+    return articles.map((item) => item.get());
   }
 };
