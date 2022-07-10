@@ -15,8 +15,8 @@ const initDB = async (sequelize, {categories, articles}) => {
 
 
   const articlePromises = articles.map(async (article) => {
-    const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});
 
+    const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});
     const categoryIds = article.categories.map((name) => categoryIdByName[name]);
     await articleModel.addCategories(categoryIds);
   });
@@ -25,3 +25,4 @@ const initDB = async (sequelize, {categories, articles}) => {
 
 
 module.exports = initDB;
+

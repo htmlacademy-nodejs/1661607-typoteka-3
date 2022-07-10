@@ -6,17 +6,30 @@ const category = require(`./category`);
 const CategoryService = require(`../data-service/category`);
 const {MOCK_ARTICLES, CATEGORIES} = require(`../../tests/mocks`);
 const {HttpCode, ServerRoute} = require(`../../const`);
+const Sequelize = require(`sequelize`);
+const initDB = require(`../lib/init-db`);
 
 
 const FAKE_CATEGORY = `absent category`;
 
+
+const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+
+
 const app = express();
 app.use(express.json());
-category(app, new CategoryService(MOCK_ARTICLES));
+
+beforeAll(async () => {
+  await initDB(mockDB, {categories: CATEGORIES, articles: MOCK_ARTICLES});
+  category(app, new CategoryService(mockDB));
+});
+
 
 describe(`CATEGORY API`, () => {
   let response;
   beforeAll(async () => {
+    await initDB(mockDB, {categories: CATEGORIES, articles: MOCK_ARTICLES});
+    category(app, new CategoryService(mockDB));
     response = await request(app).get(ServerRoute.CATEGORY);
   });
 
@@ -30,4 +43,3 @@ describe(`CATEGORY API`, () => {
   test(`${FAKE_CATEGORY} does not exist in response`, () => expect(response.body).not.toContain(FAKE_CATEGORY));
 
 });
-
