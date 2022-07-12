@@ -1,5 +1,6 @@
 'use strict';
 
+
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../const`);
 const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
@@ -13,6 +14,7 @@ module.exports = (apiRouter, service) => {
 
   searchRouter.get(`/`, asyncHandlerWrapper(async (req, res) => {
     const {title} = req.query;
+
 
     if (!title) {
       return res.status(HttpCode.BAD_REQUEST).json([]);

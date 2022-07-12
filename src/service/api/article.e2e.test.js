@@ -1,342 +1,310 @@
-// "use strict";
+"use strict";
 
-// const express = require(`express`);
-// const request = require(`supertest`);
 
-// const article = require(`./article`);
-// const ArticleService = require(`../data-service/article`);
-// const CommentService = require(`../data-service/comment`);
-// const {MOCK_ARTICLES, CATEGORIES} = require(`../../tests/mocks`);
-// const {ServerRoute, HttpCode} = require(`../../const`);
-// const Sequelize = require(`sequelize`);
-// const initDB = require(`../lib/init-db`);
+const express = require(`express`);
+const request = require(`supertest`);
+const Sequelize = require(`sequelize`);
 
+const article = require(`./article`);
+const ArticleService = require(`../data-service/article`);
+const CommentService = require(`../data-service/comment`);
+const {MOCK_ARTICLES, CATEGORIES} = require(`../../tests/mocks`);
+const {ServerRoute, HttpCode} = require(`../../const`);
+const initDB = require(`../lib/init-db`);
 
-// const mockArticle = MOCK_ARTICLES[0];
-// const commentsOfFirstArticleRout = `${ServerRoute.ARTICLES}/${mockArticle.id}/comments`;
-// const firstCommentOfFirstArticleRout = `${commentsOfFirstArticleRout}/${mockArticle.comments[0].id}`;
-// const protoArticle = {
-//   category: `new mock category`,
-//   title: `new mock title`,
-//   fullText: `new mock fullText`,
-//   createdDate: `new mock createdDate`,
-//   announce: `new mock announce`,
-//   comments: []
-// };
 
+const mockArticle = MOCK_ARTICLES[0];
+const commentsOfFirstArticleRout = `${ServerRoute.ARTICLES}/${1}/comments`;
+const firstCommentOfFirstArticleRout = `${commentsOfFirstArticleRout}/${1}`;
+const protoArticle = {
+  title: `new mock title`,
+  fullText: `new mock fullText`,
+  announce: `new mock announce`,
+  category: [`11`, `22`],
+  comments: [`c`, `cc`, `ccc`]
+};
 
-// const createAPI = async () => {
-//   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-//   await initDB(mockDB, {articles: MOCK_ARTICLES, categories: CATEGORIES});
-//   const app = express();
-//   app.use(express.json());
-//   article(app, new ArticleService(mockDB), new CommentService(mockDB));
-//   return app;
-// };
 
-// describe(`API returns a list of articles`, () => {
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+  await initDB(mockDB, {articles: MOCK_ARTICLES, categories: CATEGORIES});
+  const app = express();
+  app.use(express.json());
+  article(app, new ArticleService(mockDB), new CommentService(mockDB));
+  return app;
+};
 
+describe(`API returns a list of articles`, () => {
 
-//   let response;
 
-//   beforeAll(async () => {
-//     const app = await createAPI();
-//     response = await request(app)
-//       .get(ServerRoute.ARTICLES);
-//   });
+  let response;
 
-//   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app)
+      .get(ServerRoute.ARTICLES);
+  });
 
-//   test(`Returns a list of 5 articles`, () => expect(response.body.length).toBe(5));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-//   test(`First article's id equals "${mockArticle.id}"`, () => expect(response.body[0].id).toBe(mockArticle.id));
+  test(`Returns a list of 5 articles`, () => expect(response.body.length).toBe(5));
 
-// });
 
-// describe(`API returns an article with given id`, () => {
+});
 
+describe(`API returns an article with given id`, () => {
 
-//   let response;
 
-//   beforeAll(async () => {
-//     const app = await createAPI();
-//     response = await request(app)
-//       .get(`${ServerRoute.ARTICLES}/${mockArticle.id}`);
-//   });
+  let response;
 
-//   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app)
+      .get(`${ServerRoute.ARTICLES}/${1}`);
+  });
 
-//   test(`article's title is "${mockArticle.title}"`, () => expect(response.body.title).toBe(mockArticle.title));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-// });
+  test(`article's title is "${mockArticle.title}"`, () => expect(response.body.title).toBe(mockArticle.title));
 
-// describe(`API creates an article if data is valid`, () => {
+});
 
-//   const newArticle = {...protoArticle};
-//   let response;
-//   let app;
+describe(`API creates an article if data is valid`, () => {
 
-//   beforeAll(async () => {
-//     app = await createAPI();
+  const newArticle = {...protoArticle};
+  let response;
+  let app;
 
-//     response = await request(app)
-//       .post(ServerRoute.ARTICLES)
-//       .send(newArticle);
-//   });
+  beforeAll(async () => {
+    app = await createAPI();
 
+    response = await request(app)
+      .post(ServerRoute.ARTICLES)
+      .send(newArticle);
+  });
 
-//   test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
 
+  test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
 
-//   test(`Returns article created`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
 
-//   test(`articles count is changed`, () => request(app)
-//     .get(ServerRoute.ARTICLES)
-//     .expect((res) => expect(res.body.length).toBe(6))// 5
-//   );
-// });
+  // test(`Returns article created`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
 
-// describe(`API refuses to create an article if data is invalid`, () => {
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
+  test(`articles count is changed`, () => request(app)
+    .get(ServerRoute.ARTICLES)
+    .expect((res) => expect(res.body.length).toBe(6))// 6
+  );
+});
 
+describe(`API refuses to create an article if data is invalid`, () => {
+  let app;
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
-//   test(`Without any required property response code is 400`, async () => {
-//     const newArticle = {...protoArticle};
-//     for (const key of Object.keys(newArticle)) {
-//       const badArticle = {...protoArticle};
-//       delete badArticle[key];
-//       await request(app)
-//         .post(ServerRoute.ARTICLES)
-//         .send(badArticle)
-//         .expect(HttpCode.BAD_REQUEST);
-//     }
-//   });
 
-// });
+  test(`Without any required property response code is 400`, async () => {
+    const newArticle = {...protoArticle};
+    for (const key of Object.keys(newArticle)) {
+      const badArticle = {...protoArticle};
+      delete badArticle[key];
+      await request(app)
+        .post(ServerRoute.ARTICLES)
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
 
-// describe(`API changes existent article`, () => {
+});
 
-//   const newArticle = {...protoArticle};
+describe(`API changes existent article`, () => {
 
-//   let response;
-//   let app;
+  const newArticle = {...protoArticle};
 
-//   beforeAll(async () => {
-//     app = await createAPI();
-//     response = await request(app)
-//       .put(`${ServerRoute.ARTICLES}/${mockArticle.id}`)
-//       .send(newArticle);
-//   });
+  let response;
+  let app;
 
-//   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .put(`${ServerRoute.ARTICLES}/${1}`)
+      .send(newArticle);
+  });
 
-//   test(`Returns changed article`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-//   test(`article is really changed`, () => request(app)
-//     .get(`${ServerRoute.ARTICLES}/${mockArticle.id}`)
-//     .expect((res) => expect(res.body.title).toBe(protoArticle.title))
-//   );
+  test(`article is really changed`, () => request(app)
+    .get(`${ServerRoute.ARTICLES}/${1}`)
+    .expect((res) => expect(res.body.title).toBe(protoArticle.title))
+  );
 
-// });
+});
 
-// test(`API returns status code 404 when trying to change non-existent article`, () => {
+test(`API returns status code 404 when trying to change non-existent article`, async () => {
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
 
-//   const validArticle = {...protoArticle};
+  const app = await createAPI();
 
-//   return request(app)
-//     .put(`${ServerRoute.ARTICLES}/FAKE_ID`)
-//     .send(validArticle)
-//     .expect(HttpCode.NOT_FOUND);
-// });
+  const validArticle = {...protoArticle};
 
-// test(`API returns status code 400 when trying to change an article with invalid data`, () => {
+  return request(app)
+    .put(`${ServerRoute.ARTICLES}/FAKE_ID`)
+    .send(validArticle)
+    .expect(HttpCode.NOT_FOUND);
+});
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
+test(`API returns status code 400 when trying to change an article with invalid data`, async () => {
 
-//   const invalidArticle = {...protoArticle};
-//   delete invalidArticle.announce;
+  const app = await createAPI();
 
-//   return request(app)
-//     .put(`${ServerRoute.ARTICLES}/${mockArticle.id}`)
-//     .send(invalidArticle)
-//     .expect(HttpCode.BAD_REQUEST);
-// });
+  const invalidArticle = {...protoArticle};
+  delete invalidArticle.announce;
 
-// describe(`API correctly deletes an article`, () => {
+  return request(app)
+    .put(`${ServerRoute.ARTICLES}/${1}`)
+    .send(invalidArticle)
+    .expect(HttpCode.BAD_REQUEST);
+});
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
+describe(`API correctly deletes an article`, () => {
 
-//   let response;
+  let app;
+  let response;
 
-//   beforeAll(async () => {
-//     response = await request(app)
-//       .delete(`${ServerRoute.ARTICLES}/${mockArticle.id}`);
-//   });
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .delete(`${ServerRoute.ARTICLES}/${1}`);
+  });
 
-//   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-//   test(`Returns deleted article`, () => expect(response.body.id).toBe(mockArticle.id));
+  test(`article count is 4 now`, () => request(app)
+    .get(ServerRoute.ARTICLES)
+    .expect((res) => expect(res.body.length).toBe(4))
+  );
 
-//   test(`article count is 4 now`, () => request(app)
-//     .get(ServerRoute.ARTICLES)
-//     .expect((res) => expect(res.body.length).toBe(4))
-//   );
+});
 
-// });
+test(`API refuses to delete non-existent article`, async () => {
 
-// test(`API refuses to delete non-existent article`, () => {
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
+  const app = await createAPI();
 
-//   return request(app)
-//     .delete(`${ServerRoute.ARTICLES}/NOEXST`)
-//     .expect(HttpCode.NOT_FOUND);
+  return request(app)
+    .delete(`${ServerRoute.ARTICLES}/NOEXST`)
+    .expect(HttpCode.NOT_FOUND);
 
-// });
+});
 
-// describe(`API returns a list of comments to given article`, () => {
+describe(`API returns a list of comments to given article`, () => {
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
 
-//   let response;
+  let response;
 
-//   beforeAll(async () => {
-//     response = await request(app)
-//       .get(commentsOfFirstArticleRout);
-//   });
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app)
+      .get(commentsOfFirstArticleRout);
+  });
 
-//   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-//   test(`Returns list of 4 comments`, () => expect(response.body.length).toBe(4));
+  test(`Returns list of 3 comments`, () => expect(response.body.length).toBe(MOCK_ARTICLES[0].comments.length));
 
-//   test(`First comment's id is "${mockArticle.comments[0].id}"`, () => expect(response.body[0].id).toBe(mockArticle.comments[0].id));
+  test(`First comment's id is 1"`, () => expect(response.body[0].text).toBe(MOCK_ARTICLES[0].comments[0].text));
 
-// });
+});
 
 
-// describe(`API creates a comment if data is valid`, () => {
+describe(`API creates a comment if data is valid`, () => {
 
-//   const newComment = {
-//     text: `test comment`
-//   };
+  const newComment = {
+    text: `test comment`
+  };
 
-//   let app;
-//   let response;
+  let app;
+  let response;
 
-//   beforeAll(async () => {
-//     app = await createAPI();
-//     response = await request(app)
-//       .post(commentsOfFirstArticleRout)
-//       .send(newComment);
-//   });
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .post(commentsOfFirstArticleRout)
+      .send(newComment);
+  });
 
 
-//   test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
+  test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
 
 
-//   test(`Returns comment created`, () => expect(response.body).toEqual(expect.objectContaining(newComment)));
+  test(`Returns comment created`, () => expect(response.body).toEqual(expect.objectContaining(newComment)));
 
-//   test(`Comments count is changed`, () => request(app)
-//     .get(commentsOfFirstArticleRout)
-//     .expect((res) => expect(res.body.length).toBe(5))
-//   );
+  test(`Comments count is changed`, () => request(app)
+    .get(commentsOfFirstArticleRout)
+    .expect((res) => expect(res.body.length).toBe(4))
+  );
 
-// });
+});
 
-// test(`API refuses to create a comment to non-existent article and returns status code 404`, () => {
+test(`API refuses to create a comment to non-existent article and returns status code 404`, async () => {
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
+  const app = await createAPI();
 
-//   return request(app)
-//     .post(`${ServerRoute.ARTICLES}/FAKE_ID/comments`)
-//     .send({
-//       text: `Неважно`
-//     })
-//     .expect(HttpCode.NOT_FOUND);
+  return request(app)
+    .post(`${ServerRoute.ARTICLES}/FAKE_ID/comments`)
+    .send({
+      text: `Неважно`
+    })
+    .expect(HttpCode.NOT_FOUND);
 
-// });
+});
 
-// test(`API refuses to create a comment when data is invalid, and returns status code 400`, () => {
+test(`API refuses to create a comment when data is invalid, and returns status code 400`, async () => {
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
 
-//   return request(app)
-//     .post(commentsOfFirstArticleRout)
-//     .send({})
-//     .expect(HttpCode.BAD_REQUEST);
+  const app = await createAPI();
 
-// });
+  return request(app)
+    .post(commentsOfFirstArticleRout)
+    .send({})
+    .expect(HttpCode.BAD_REQUEST);
 
-// describe(`API correctly deletes a comment`, () => {
+});
 
+describe(`API correctly deletes a comment`, () => {
 
-//   let response;
-//   let app;
 
-//   beforeAll(async () => {
-//     app = await createAPI();
-//     response = await request(app)
-//       .delete(firstCommentOfFirstArticleRout);
-//   });
+  let response;
+  let app;
 
-//   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .delete(firstCommentOfFirstArticleRout);
+  });
 
-//   test(`Returns comment deleted`, () => expect(response.body.id).toBe(mockArticle.comments[0].id));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-//   test(`Comments count is 3 now`, () => request(app)
-//     .get(`${ServerRoute.ARTICLES}/${mockArticle.id}/comments/`)
-//     .expect((res) => expect(res.body.length).toBe(3))
-//   );
+  test(`Comments count is 2 now`, () => request(app)
+    .get(`${ServerRoute.ARTICLES}/${1}/comments/`)
+    .expect((res) => expect(res.body.length).toBe(2))
+  );
 
-// });
+});
 
-// test(`API refuses to delete non-existent comment`, () => {
+test(`API refuses to delete non-existent comment`, async () => {
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
+  const app = await createAPI();
 
-//   return request(app)
-//     .delete(`${ServerRoute.ARTICLES}/${mockArticle.id}/comments/NOEXST`)
-//     .expect(HttpCode.NOT_FOUND);
+  return request(app)
+    .delete(`${ServerRoute.ARTICLES}/${1}/comments/NOEXST`)
+    .expect(HttpCode.NOT_FOUND);
+});
 
-// });
+test(`API refuses to delete a comment to non-existent article`, async () => {
 
-// test(`API refuses to delete a comment to non-existent article`, () => {
+  const app = await createAPI();
 
-//   let app;
-//   beforeAll(async () => {
-//     app = await createAPI();
-//   });
-
-//   return request(app)
-//     .delete(`${ServerRoute.ARTICLES}/NOEXST/comments/${mockArticle.comments[0].id}`)
-//     .expect(HttpCode.NOT_FOUND);
-// });
+  return request(app)
+    .delete(`${ServerRoute.ARTICLES}/NOEXST/comments/1`)
+    .expect(HttpCode.NOT_FOUND);
+});

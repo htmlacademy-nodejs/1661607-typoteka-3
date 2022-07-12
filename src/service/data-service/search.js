@@ -13,7 +13,8 @@ module.exports = class SearchService {
     const articles = await this._Article.findAll({
       where: {
         title: {
-          [Op.iLike]: `%${searchedText}%` // ??? почему-то не работает регистронезависимость
+          // [Op.iLike]: `%${searchedText}%` // ??? почему-то не работает регистронезависимость, а с SQLITE  вообще не РАБОТАЕТ
+          [Op.substring]: searchedText
         }
       },
       order: [[`createdAt`, `DESC`]]

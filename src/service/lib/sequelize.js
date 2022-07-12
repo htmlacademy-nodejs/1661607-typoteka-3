@@ -4,8 +4,6 @@ const Sequelize = require(`sequelize`);
 
 const {DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, NODE_DB} = process.env;
 
-console.log(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, NODE_DB);
-
 if (!(DB_HOST && DB_PORT && DB_NAME && DB_USER && DB_PASSWORD) && NODE_DB) {
   throw Error(`One or more environmental variables are not defined`);
 }

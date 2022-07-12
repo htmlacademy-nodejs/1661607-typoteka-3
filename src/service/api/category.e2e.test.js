@@ -12,17 +12,9 @@ const initDB = require(`../lib/init-db`);
 
 const FAKE_CATEGORY = `absent category`;
 
-
 const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-
-
 const app = express();
 app.use(express.json());
-
-beforeAll(async () => {
-  await initDB(mockDB, {categories: CATEGORIES, articles: MOCK_ARTICLES});
-  category(app, new CategoryService(mockDB));
-});
 
 
 describe(`CATEGORY API`, () => {
@@ -37,7 +29,8 @@ describe(`CATEGORY API`, () => {
   test(`correct number of categories`, () => expect(response.body.length).toBe(CATEGORIES.length));
 
   CATEGORIES.forEach((item) => {
-    test(`${item} exists in response`, () => expect(response.body).toContain(item));
+    const getNames = (categories) => categories.map((i) => i.name);
+    test(`${item} exists in response`, () => expect(getNames(response.body)).toContain(item));
   });
 
   test(`${FAKE_CATEGORY} does not exist in response`, () => expect(response.body).not.toContain(FAKE_CATEGORY));

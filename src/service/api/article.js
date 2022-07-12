@@ -1,5 +1,5 @@
-
 'use strict';
+
 
 const {Router} = require(`express`);
 const {HttpCode, ServerRoute} = require(`../../const`);
@@ -46,7 +46,7 @@ module.exports = (apiRouter, articleService, commentService) => {
   articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, validateArticle, asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const oldArticle = req.body;
-    const isOldArticle = articleService.findOne(articleId);
+    const isOldArticle = await articleService.findOne(articleId);
 
     if (!isOldArticle) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with ${articleId}`);
@@ -58,7 +58,7 @@ module.exports = (apiRouter, articleService, commentService) => {
 
   articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
-    const article = articleService.drop(articleId);
+    const article = await articleService.drop(articleId);
 
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with ${articleId}`);
@@ -68,22 +68,23 @@ module.exports = (apiRouter, articleService, commentService) => {
   }));
 
   articleRouter.get(ArticlesRoute.COMMENTS, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
-    const {article} = res.locals;
-    const comments = await commentService.findAll(article);
+    const {articleId} = res.locals;
+    const comments = await commentService.findAll(articleId);
     return res.status(HttpCode.OK).json(comments);
   }));
 
   articleRouter.post(ArticlesRoute.COMMENTS, [validateComment, addArticleToLocals(articleService)], asyncHandlerWrapper(async (req, res) => {
-    const {article} = res.locals;
-    const comments = await commentService.create(article, req.body);
+    const {articleId} = res.locals;
+
+    const comments = await commentService.create(articleId, req.body);
+
     return res.status(HttpCode.CREATED).json(comments);
   }));
 
   articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
 
     const {commentId} = req.params;
-    const {article} = res.locals;
-    const comment = await commentService.drop(article, commentId);
+    const comment = await commentService.drop(commentId);
 
     if (!comment) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found comment with ${commentId}`);

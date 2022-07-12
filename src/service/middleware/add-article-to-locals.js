@@ -1,5 +1,6 @@
 'use strict';
 
+
 const {HttpCode} = require(`../../const`);
 
 module.exports = (service) => async (req, res, next) => {
@@ -10,6 +11,6 @@ module.exports = (service) => async (req, res, next) => {
     return res.status(HttpCode.NOT_FOUND).send(`article with ${articleId} not found`);
   }
 
-  res.locals.article = article;
+  res.locals.articleId = articleId;
   return next();
 };

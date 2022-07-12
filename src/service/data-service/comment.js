@@ -9,20 +9,16 @@ module.exports = class CommentService {
   }
 
   async create(articleId, comment) {
-    // return await this._Comment.create({...comment, articleId}); //?? а почемку не так ??
-    const article = await this._Article.findByPk(articleId);
-    return article.createComment(comment);
+    return await this._Comment.create({...comment, articleId});
   }
 
   async findOne(id) {
     return await this._Comment.findByPk(id);
   }
 
-  async findAll(article) {
+  async findAll(articleId) {
     return await this._Comment.findAll({
-      where: {
-        articleId: article.id
-      },
+      where: {articleId},
       order: [[`createdAt`, `ASC`]]
     });
   }
