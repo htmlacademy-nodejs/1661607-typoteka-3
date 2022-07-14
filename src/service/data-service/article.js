@@ -23,6 +23,18 @@ module.exports = class ArticleService {
     return articles.map((item) => item.get());
   }
 
+
+  async findPage({limit, offset}) {
+    const {count, rows} = await this._Article.findAndCountAll({
+      limit,
+      offset,
+      include: [Aliase.CATEGORIES, Aliase.COMMENTS],
+      order: [[`createdAt`, `DESC`]],
+      distinct: true
+    });
+    return {count, articles: rows};
+  }
+
   async findOne(id) {
     return await this._Article.findByPk(id, {include: [Aliase.CATEGORIES]});
   }

@@ -21,8 +21,8 @@ class API {
   }
 
 
-  getAllArticles() {
-    return this._load(ServerRoute.ARTICLES);
+  getAllArticles({limit, offset}) {
+    return this._load(ServerRoute.ARTICLES, {params: {limit, offset}});
   }
 
   getOneArticles(id) {

@@ -32,6 +32,28 @@ mixin createPreviewArticle(title, announce, category, comments, createdDate)
       b.preview__comment-count= comments.length
 
 
+mixin createPage(page, active)
+  if active
+    li.pagination__item.pagination__item--active
+      a.button--disabled(href='#')= page
+  else
+    li.pagination__item
+      a(href=`?page=${page}`)= page
+
+mixin createArrowPage(backwards, page, totalPage)
+  li
+    if backwards
+      if page == 1
+        a.pagination__button.button.button--backwards.button--disabled(href='#' aria-label='Страница назад') Назад
+      else
+        a.pagination__button.button.button--backwards(href=`?page=${page - 1}` aria-label='Страница назад') Назад  
+    else 
+      if page == totalPage
+        a.pagination__button.button.button--forward.button--disabled(href='#' aria-label='Страница вперед') Вперед
+      else 
+        a.pagination__button.button.button--forward(href=`?page=${page + 1}` aria-label='Страница вперед') Вперед
+
+
 block headerContent
   include ./headers/header-sign-out
   //- include ./headers/header-sign-in
@@ -40,11 +62,12 @@ block headerContent
 
 block mainContent
   main.main-page
+      
       h1.visually-hidden Главная страница личного блога Типотека
       p.
 
         Это приветственный текст, который владелец блога может выбрать, чтобы описать себя 👏
-
+        
       section.main-page__theme-list
         h2.visually-hidden Список тем
         ul.themes
@@ -82,33 +105,12 @@ block mainContent
           each article of articles
             +createPreviewArticle(article.title, article.announce, article.categories, article.comments, article.createdDate)
 
-          //- li.preview__item.preview__item--noimage
-          //-   ul.preview__breadcrumbs
-          //-     li.preview__breadcrumbs-item
-          //-       a.preview__breadcrumbs-link(href='#') Фриланс
-          //-   time.preview__time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-          //-   h3.preview__name
-          //-     a.preview__name-link(href='#') Путин подписал закон о предустановке российских приложений на смартфоны и другую электронику
-          //-   p.preview__text Президент России Владимир Путин подписал закон об обязательной предустановке российского программного обеспечения на электронную технику, продаваемую в России. Документ опубликован на официальном сайте правовой информации.
-          //-   a.preview__comment(href='#')
-          //-     | Комментарии
-          //-     span.preview__cloud
-          //-     |
-          //-     b.preview__comment-count 12
-
       .preview__toggle-wrapper
         ul.preview__pagination.pagination
-          li
-            a.pagination__button.button.button--backwards.button--disabled(href='#' aria-label='Страница назад') Назад
-          li.pagination__item.pagination__item--active
-            a(href='#') 1
-          li.pagination__item
-            a(href='#') 2
-          li.pagination__item
-            a(href='#') 3
-          li.pagination__item
-            a(href='#') 4
-          li.pagination__item
-            a(href='#') 5
-          li
-            a.pagination__button.button.button--forward(href='#' aria-label='Страница вперед') Вперед
+          +createArrowPage(1, page, totalPage)
+
+          each item of pages 
+            +createPage(item, item == page)
+
+          +createArrowPage(0, page, totalPage)
+

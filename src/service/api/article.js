@@ -23,8 +23,15 @@ module.exports = (apiRouter, articleService, commentService) => {
   apiRouter.use(ServerRoute.ARTICLES, articleRouter);
 
   articleRouter.get(ArticlesRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
+
+    const {limit, offset} = req.query;
+    if (limit && offset) {
+      const {articles, count} = await articleService.findPage({limit, offset});
+      return res.status(HttpCode.OK).json({articles, count});
+    }
+
     const articles = await articleService.findAll();
-    return res.status(HttpCode.OK).json(articles);
+    return res.status(HttpCode.OK).json({articles});
   }));
 
   articleRouter.get(ArticlesRoute.ARTICLE_BY_ID, asyncHandlerWrapper(async (req, res) => {
