@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {render} = require(`../../utils`);
+const {render, asyncHandlerClientWrapper} = require(`../../utils`);
 const api = require(`../api`);
 
 
@@ -19,8 +19,8 @@ const MainRoute = {
 
 const mainRouter = new Router();
 
-mainRouter.get(MainRoute.LOGIN, render(Template.LOGIN));
-mainRouter.get(MainRoute.MAIN, async (req, res) => {
+mainRouter.get(MainRoute.LOGIN, asyncHandlerClientWrapper(render(Template.LOGIN)));
+mainRouter.get(MainRoute.MAIN, asyncHandlerClientWrapper(async (req, res) => {
 
   const page = +req.query.page || 1;
 
@@ -32,11 +32,11 @@ mainRouter.get(MainRoute.MAIN, async (req, res) => {
   const totalPage = Math.ceil(+count / LIMIT_ARTICLES);
   const pages = new Array(totalPage).fill(null).map((_, i) => i + 1);
   res.render(Template.MAIN, {title: `Типотека`, articles, count, pages, page, totalPage, categories});
-});
+}));
 
-mainRouter.get(MainRoute.REGISTER, render(Template.SIGN_UP));
+mainRouter.get(MainRoute.REGISTER, asyncHandlerClientWrapper(render(Template.SIGN_UP)));
 
-mainRouter.get(MainRoute.SEARCH, async (req, res) => {
+mainRouter.get(MainRoute.SEARCH, asyncHandlerClientWrapper(async (req, res) => {
   const {title} = req.query;
 
   if (!title) {
@@ -49,6 +49,6 @@ mainRouter.get(MainRoute.SEARCH, async (req, res) => {
       res.render(Template.SEARCH, {articles: null, title});
     }
   }
-});
+}));
 
 module.exports = mainRouter;

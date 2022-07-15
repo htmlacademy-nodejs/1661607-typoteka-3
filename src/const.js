@@ -52,7 +52,9 @@ const Template = {
   MAIN: `main`,
   SIGN_UP: `sign-up`,
   LOGIN: `login`,
-  SEARCH: `search`
+  SEARCH: `search`,
+  ERR_404: `errors/404`,
+  ERR_500: `errors/500`
 };
 
 const HttpCode = {

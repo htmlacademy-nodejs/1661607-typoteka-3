@@ -45,12 +45,6 @@ exports.server = {
       logger.error(`An error occurred on processing request: ${err.message}`);
     });
 
-    app.use((req, res, next) => {
-      logger.debug(`Request on route ${req.url}`);
-      res.on(`finish`, () => logger.info(`Response status code ${res.statusCode}`));
-      next();
-    });
-
 
     const port = +arg || DEFAULT_PORT;
     app.listen(port)

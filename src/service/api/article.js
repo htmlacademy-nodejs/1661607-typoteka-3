@@ -39,7 +39,7 @@ module.exports = (apiRouter, articleService, commentService) => {
     const article = await articleService.findOne(articleId);
 
     if (!article) {
-      res.status(HttpCode.NOT_FOUND).send(`Not found article with ${articleId}`);
+      return res.status(HttpCode.NOT_FOUND).send(`Not found article with ${articleId}`);
     }
 
     return res.status(HttpCode.OK).json(article);

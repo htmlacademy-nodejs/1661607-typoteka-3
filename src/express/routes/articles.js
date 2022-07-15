@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {render, getDate} = require(`../../utils`);
+const {render, getDate, asyncHandlerClientWrapper} = require(`../../utils`);
 const api = require(`../api`);
 
 const multer = require(`multer`);
@@ -62,6 +62,7 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) 
     picture: file ? file.filename : ``,
     title, announce, fullText,
     category: ensureArray(category),
+    comments: []
   };
 
   try {
@@ -74,8 +75,8 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) 
 });
 
 
-articlesRouter.get(ArticleRoute.CATEGORY, render(Template.ARTICLES_BY_CATEGORY));
-articlesRouter.get(ArticleRoute.ADD, async (req, res) => {
+articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerClientWrapper(render(Template.ARTICLES_BY_CATEGORY)));
+articlesRouter.get(ArticleRoute.ADD, asyncHandlerClientWrapper(async (req, res) => {
 
   const query = getQueriesFromRedirect(req.query);
   const checkedCategories = query.category || [];
@@ -84,19 +85,19 @@ articlesRouter.get(ArticleRoute.ADD, async (req, res) => {
   const categories = allCategories.map((item) => ({name: item.name, checked: checkedCategories.some((cat) => cat === item.name)}));
 
   res.render(Template.POST, {article: query, categories});
-});
+}));
 
-articlesRouter.get(ArticleRoute.EDIT, async (req, res) => {
+articlesRouter.get(ArticleRoute.EDIT, asyncHandlerClientWrapper(async (req, res) => {
   const {id} = req.params;
   const article = await api.getOneArticles(id);
   const allCategories = await api.getCategories();
   const categories = allCategories.map((item) => ({...item, checked: article.categories.some((cat) => cat.name === item.name)}));
 
   res.render(Template.POST, {article, categories});
-});
+}));
 
 
-articlesRouter.get(ArticleRoute.ID, async (req, res) => {
+articlesRouter.get(ArticleRoute.ID, asyncHandlerClientWrapper(async (req, res) => {
   const {id} = req.params;
   const rawArticle = await api.getOneArticles(id);
   const allCategories = await api.getCategories(true);
@@ -110,6 +111,6 @@ articlesRouter.get(ArticleRoute.ID, async (req, res) => {
   const comments = rawComments.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
 
   res.render(Template.POST_DETAIL, {article, categories, comments});
-});
+}));
 
 module.exports = articlesRouter;

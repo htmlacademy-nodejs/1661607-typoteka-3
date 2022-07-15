@@ -22,7 +22,10 @@ class API {
 
 
   getAllArticles({limit, offset}) {
-    return this._load(ServerRoute.ARTICLES, {params: {limit, offset}});
+    if (limit !== undefined && offset !== undefined) {
+      return this._load(ServerRoute.ARTICLES, {params: {limit, offset}});
+    }
+    return this._load(ServerRoute.ARTICLES);
   }
 
   getOneArticles(id) {

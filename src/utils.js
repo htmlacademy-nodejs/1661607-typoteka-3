@@ -4,7 +4,7 @@
 const dayjs = require(`dayjs`);
 const {readFile} = require(`fs`).promises;
 const {nanoid} = require(`nanoid`);
-const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode} = require(`./const`);
+const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode, Template} = require(`./const`);
 
 
 const COMMENT_COUNT = 5;
@@ -102,6 +102,16 @@ const connectToDB = async (sequelize, logger) => {
   }
 };
 
+// const asyncHandlerClientWrapper = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((error) => res.render(Template.ERR_500, {error}));
+
+const asyncHandlerClientWrapper = (fn) => async (req, res) => {
+  try {
+    await fn(req, res);
+  } catch (error) {
+    res.render(Template.ERR_500, {error});
+  }
+};
+
 
 module.exports = {
   shuffle, getRandomInt,
@@ -110,4 +120,5 @@ module.exports = {
   render,
   checkFields, getFormatDate, getDate,
   connectToDB,
+  asyncHandlerClientWrapper
 };
