@@ -1,17 +1,16 @@
 'use strict';
 
-
-const ARTICLE_FIELDS = [`title`, `announce`, `fullText`, `category`, `comments`];
-
 const {HttpCode} = require(`../../const`);
-const {checkFields} = require(`../../utils`);
+const {articleSchema} = require(`../schemas/article-schema`);
 
 module.exports = (req, res, next) => {
 
-  const articleKeys = Object.keys(req.body);
+  const article = req.body;
 
-  if (!checkFields(ARTICLE_FIELDS, articleKeys)) {
-    return res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
+  const {error} = articleSchema.validate(article, {abortEarly: false});
+
+  if (error) {
+    return res.status(HttpCode.BAD_REQUEST).send(error.details.map((err) => err.message).join(`\n`));
   }
   return next();
 };

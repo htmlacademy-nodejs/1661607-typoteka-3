@@ -1,18 +1,16 @@
-
-
 'use strict';
 
-const COMMENT_FIELDS = [`text`];
 
 const {HttpCode} = require(`../../const`);
-const {checkFields} = require(`../../utils`);
+const {commentSchema} = require(`../schemas/comment-schema`);
 
 module.exports = (req, res, next) => {
 
-  const commentKeys = Object.keys(req.body);
+  const comment = req.body;
+  const {error} = commentSchema.validate(comment, {abortEarly: false});
 
-  if (!checkFields(COMMENT_FIELDS, commentKeys)) {
-    return res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
+  if (error) {
+    return res.status(HttpCode.BAD_REQUEST).send(error.details.map((err) => err.message).join(`\n`));
   }
 
   return next();

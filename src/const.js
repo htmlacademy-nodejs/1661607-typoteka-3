@@ -87,9 +87,19 @@ const Aliase = {
   ARTICLE_CATEGORIES: `articleCategories`
 };
 
+const JoiMessageKey = {
+  STRING_MIN: `string.min`,
+  STRING_MAX: `string.max`,
+  STRING_EMPTY: `string.empty`,
+  REQUIRED: `any.required`,
+  NUMBER_MIN: `number.min`,
+  NUMBER_BASE: `number.base`,
+};
+
 
 module.exports = {
   ID_LENGTH, DATE_FORMAT, WRITE_FILE_NAME,
   Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env,
-  Aliase
+  Aliase,
+  JoiMessageKey
 };
