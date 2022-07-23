@@ -1,18 +1,25 @@
 extends ./layouts/wrapper
 
-mixin createTheme(theme, count)
+
+mixin createTheme(theme, count, categoryId)
   li.themes__item
-    a.themes__item-link(href='#')= theme
-      sup= count
+    if id == categoryId
+      a.themes__item-link.themes__item-link--active
+    else 
+      a.themes__item-link(href= `/articles/category/${categoryId}`)= theme
+        sup= count
+
 
 mixin createPopArticle(title, comments)
   li.hot__list-item
     a.hot__list-link(href='#')= title
       sup.hot__link-sup= comments.length
 
+
 mixin createPreviewCategory(item)
   li.preview__breadcrumbs-item
     a.preview__breadcrumbs-link(href='#')= item
+
 
 mixin createPreviewArticle(title, announce, category, comments, createdDate)
   li.preview__item
@@ -40,6 +47,7 @@ mixin createPage(page, active)
     li.pagination__item
       a(href=`?page=${page}`)= page
 
+
 mixin createArrowPage(backwards, page, totalPage)
   li
     if backwards
@@ -53,6 +61,13 @@ mixin createArrowPage(backwards, page, totalPage)
       else 
         a.pagination__button.button.button--forward(href=`?page=${page + 1}` aria-label='Страница вперед') Вперед
 
+
+mixin createComment(comment)
+  li.last__list-item
+    img.last__list-image(src=`img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
+    b.last__list-name= comment.users.name
+    a.last__list-link(href='#')= comment.text
+    
 
 block headerContent
   include ./headers/header-sign-out
@@ -71,46 +86,52 @@ block mainContent
       section.main-page__theme-list
         h2.visually-hidden Список тем
         ul.themes
+
           each category of categories
-            +createTheme(category.name, category.count)
+            +createTheme(category.name, category.count, category.id)
+
 
       .main-page__section-flex
         section.main-page__hot.hot
           h2.hot__name
             | Самое обсуждаемое
             span.hot__icon.hot__icon--fire
+
           ul.hot__list
-            each article of articles
-              +createPopArticle(article.title, article.comments)
+
+            if (articles)
+              each article of articles
+                +createPopArticle(article.title, article.comments)
+
+
         section.main-page__last.last
           h2.last__name
             | Последние комментарии
             span.last__icon.last__icon--cloud
+
           ul.last__list
-            li.last__list-item
-              img.last__list-image(src='img/avatar-small-1.png' width='20' height='20' alt='Аватар пользователя')
-              b.last__list-name Анна Артамонова
-              a.last__list-link(href='#') Сервис аренды жилья Airbnb стал глобальным партнером Международного олимпийского комитета (МОК) на девять лет, в течение которых пройдет пять Олимпиад, в том числе в Токио в 2020 году.
-            li.last__list-item
-              img.last__list-image(src='img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
-              b.last__list-name Александр Петров
-              a.last__list-link(href='#') Главреды «Дождя», Forbes и других СМИ попросили Роскомнадзор разъяснить штрафы за ссылки на сайты с матом
-            li.last__list-item.last__list-item--end
-              img.last__list-image(src='img/avatar-small-3.png' width='20' height='20' alt='Аватар пользователя')
-              b.last__list-name Игорь Шманский
-              a.last__list-link(href='#') Что-то все электрокары в последнее время все на одно лицо делаются))
+
+            if (comments)
+              each comment of comments 
+                +createComment(comment)
+
+
       section.main-page__list.preview
         h2.visually-hidden Список превью статей
+
         ul.preview__list
-          each article of articles
-            +createPreviewArticle(article.title, article.announce, article.categories, article.comments, article.createdDate)
 
-      .preview__toggle-wrapper
-        ul.preview__pagination.pagination
-          +createArrowPage(1, page, totalPage)
+          if (articles)
+            each article of articles
+              +createPreviewArticle(article.title, article.announce, article.categories, article.comments, article.createdDate)
 
-          each item of pages 
-            +createPage(item, item == page)
+      if (totalPage && page)
+        .preview__toggle-wrapper
+          ul.preview__pagination.pagination
+            +createArrowPage(1, page, totalPage)
 
-          +createArrowPage(0, page, totalPage)
+            each item of pages 
+              +createPage(item, item == page)
+
+            +createArrowPage(0, page, totalPage)
 

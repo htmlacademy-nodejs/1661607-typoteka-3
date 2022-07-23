@@ -19,7 +19,16 @@ module.exports = class CommentService {
     return await this._Comment.findByPk(id);
   }
 
-  async findAll(articleId) {
+  async findAll(limit) {
+    const comments = await this._Comment.findAll({
+      include: [Aliase.USERS],
+      limit
+    });
+
+    return comments.map((item) => item.get());
+  }
+
+  async findByArticleId(articleId) {
     const comments = await this._Comment.findAll({
       where: {articleId},
       order: [[`createdAt`, `ASC`]],

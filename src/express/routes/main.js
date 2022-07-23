@@ -4,9 +4,7 @@ const {Router} = require(`express`);
 const {Template} = require(`../../const`);
 const {render, asyncHandlerWrapper} = require(`../../utils`);
 const api = require(`../api`);
-
-
-const LIMIT_ARTICLES = 8;
+const {createMainHandler} = require(`./route-utils`);
 
 
 const MainRoute = {
@@ -20,20 +18,8 @@ const MainRoute = {
 const mainRouter = new Router();
 
 mainRouter.get(MainRoute.LOGIN, asyncHandlerWrapper(render(Template.LOGIN)));
-mainRouter.get(MainRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
 
-  const page = +req.query.page || 1;
-
-  const offset = (page - 1) * LIMIT_ARTICLES;
-
-  const categories = await api.getCategories(true);
-  const {articles, count} = await api.getAllArticles({limit: LIMIT_ARTICLES, offset});
-  console.log(articles.map((i) => i.categories));
-
-  const totalPage = Math.ceil(+count / LIMIT_ARTICLES);
-  const pages = new Array(totalPage).fill(null).map((_, i) => i + 1);
-  res.render(Template.MAIN, {title: `Типотека`, articles, count, pages, page, totalPage, categories});
-}));
+mainRouter.get(MainRoute.MAIN, asyncHandlerWrapper(createMainHandler(api)));
 
 mainRouter.get(MainRoute.REGISTER, asyncHandlerWrapper(render(Template.SIGN_UP)));
 

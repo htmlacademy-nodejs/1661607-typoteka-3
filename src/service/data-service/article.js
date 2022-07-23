@@ -1,6 +1,6 @@
 'use strict';
 
-const seq = require(`sequelize`);
+const {Op} = require(`sequelize`);
 const {Aliase} = require(`../../const`);
 
 
@@ -46,21 +46,29 @@ module.exports = class ArticleService {
 
 
     if (categoryId) {
-      console.log(`categoryId`, categoryId);
-      const {count, rows} = await this._Article.findAndCountAll({
-        // where: {"categories.id": categoryId},
-        limit,
-        offset,
-        // include: [Aliase.CATEGORIES, Aliase.COMMENTS],
+
+      // Наверняка можно и одним запросом, но пока не знаю как
+
+      const articleIds = await this._Article.findAll({
         include: [{model: this._Category, as: Aliase.CATEGORIES, where: {id: categoryId}}, Aliase.COMMENTS],
-        // attributes: [
-        //   [seq.literal(`STRING_AGG(categories.name,', ')`), `the_categories`]],
-        order: [[`createdAt`, `DESC`]],
-        distinct: true
       });
 
-      console.log(count);
-      return {count, articles: rows};
+      const ids = articleIds.map((item) => item.id);
+
+      const articles = await this._Article.findAll({
+        where: {
+          id: {
+            [Op.in]: ids
+          }
+        },
+        limit,
+        offset,
+        order: [[`createdAt`, `DESC`]],
+        include: [Aliase.CATEGORIES, Aliase.COMMENTS],
+      });
+
+
+      return {count: ids.length, articles};
     }
     const {count, rows} = await this._Article.findAndCountAll({
       limit,

@@ -23,7 +23,6 @@ class API {
 
   getAllArticles({limit, offset, categoryId}) {
     if (limit !== undefined && offset !== undefined) {
-      console.log(categoryId, categoryId);
       return this._load(ServerRoute.ARTICLES, {params: {limit, offset, categoryId}});
     }
     return this._load(ServerRoute.ARTICLES);
@@ -47,8 +46,8 @@ class API {
   }
 
 
-  getAllComments(articleId) {
-    return this._load(`${ServerRoute.ARTICLES}/${articleId}/comments`);
+  getAllComments(limit) {
+    return this._load(`${ServerRoute.ARTICLES}/comments`, {params: {limit}});
   }
 
   getCommentsByArticleId(articleId) {

@@ -99,9 +99,13 @@ const JoiMessageKey = {
   REGEXP: `string.pattern.base`
 };
 
+const LIMIT_ARTICLES = 8;
+const LIMIT_COMMENTS = 4;
+
 
 module.exports = {
   ID_LENGTH, DATE_FORMAT, WRITE_FILE_NAME,
+  LIMIT_ARTICLES, LIMIT_COMMENTS,
   Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env,
   Aliase,
   JoiMessageKey

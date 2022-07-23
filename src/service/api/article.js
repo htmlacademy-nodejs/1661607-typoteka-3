@@ -13,7 +13,9 @@ const validateId = require(`../middleware/validateId`);
 const ArticlesRoute = {
   MAIN: `/`,
   ARTICLE_BY_ID: `/:articleId`,
-  COMMENTS: `/:articleId/comments`,
+  COMMENTS_IN_ARTICLE: `/:articleId/comments`,
+  COMMENTS: `/comments`,
+
   COMMENT_BY_ID: `/:articleId/comments/:commentId`
 };
 
@@ -23,11 +25,18 @@ module.exports = (apiRouter, articleService, commentService) => {
 
   apiRouter.use(ServerRoute.ARTICLES, articleRouter);
 
+  articleRouter.get(ArticlesRoute.COMMENTS, asyncHandlerWrapper(async (req, res) => {
+    const {limit} = req.query;
+
+    const comments = await commentService.findAll(limit);
+
+    return res.status(HttpCode.OK).json(comments);
+  }));
+
   articleRouter.get(ArticlesRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
 
     const {limit, offset, categoryId} = req.query;
 
-    console.log(categoryId, categoryId, categoryId);
     if (limit && offset) {
       const {articles, count} = await articleService.findPage({limit, offset, categoryId});
       return res.status(HttpCode.OK).json({articles, count});
@@ -77,13 +86,13 @@ module.exports = (apiRouter, articleService, commentService) => {
     return res.status(HttpCode.OK).json(article);
   }));
 
-  articleRouter.get(ArticlesRoute.COMMENTS, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
+  articleRouter.get(ArticlesRoute.COMMENTS_IN_ARTICLE, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
     const {articleId} = res.locals;
-    const comments = await commentService.findAll(articleId);
+    const comments = await commentService.findByArticleId(articleId);
     return res.status(HttpCode.OK).json(comments);
   }));
 
-  articleRouter.post(ArticlesRoute.COMMENTS, [validateComment, addArticleToLocals(articleService)], asyncHandlerWrapper(async (req, res) => {
+  articleRouter.post(ArticlesRoute.COMMENTS_IN_ARTICLE, [validateComment, addArticleToLocals(articleService)], asyncHandlerWrapper(async (req, res) => {
 
     const {articleId} = res.locals;
 
@@ -103,4 +112,6 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     return res.status(HttpCode.OK).json(comment);
   }));
+
+
 };
