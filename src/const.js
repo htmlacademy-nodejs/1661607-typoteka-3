@@ -45,6 +45,7 @@ const FilePath = {
 const Template = {
   ARTICLES_BY_CATEGORY: `articles-by-category`,
   POST: `post`,
+  EDIT: `edit-article`,
   POST_DETAIL: `post-detail`,
   MY: `my`,
   ALL_CATEGORIES: `all-categories`,
@@ -84,7 +85,8 @@ const Aliase = {
   CATEGORIES: `categories`,
   COMMENTS: `comments`,
   ARTICLES: `articles`,
-  ARTICLE_CATEGORIES: `articleCategories`
+  ARTICLE_CATEGORIES: `article_categories`,
+  USERS: `users`
 };
 
 const JoiMessageKey = {
@@ -94,6 +96,7 @@ const JoiMessageKey = {
   REQUIRED: `any.required`,
   NUMBER_MIN: `number.min`,
   NUMBER_BASE: `number.base`,
+  REGEXP: `string.pattern.base`
 };
 
 

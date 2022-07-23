@@ -102,15 +102,20 @@ const connectToDB = async (sequelize, logger) => {
   }
 };
 
-// const asyncHandlerClientWrapper = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((error) => res.render(Template.ERR_500, {error}));
 
 const asyncHandlerClientWrapper = (fn) => async (req, res) => {
   try {
-    await fn(req, res);
+    return await fn(req, res);
   } catch (error) {
-    res.render(Template.ERR_500, {error});
+    if (error.response && error.response.status === 404) {
+      return res.render(Template.ERR_404, {error: error.response.data});
+    }
+    return res.render(Template.ERR_500, {error});
   }
 };
+
+
+const prepareErrors = (error) => error.response.data.split(`\n`);
 
 
 module.exports = {
@@ -120,5 +125,6 @@ module.exports = {
   render,
   checkFields, getFormatDate, getDate,
   connectToDB,
-  asyncHandlerClientWrapper
+  asyncHandlerClientWrapper,
+  prepareErrors
 };

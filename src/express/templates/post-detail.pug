@@ -10,10 +10,11 @@ mixin createCategory(category)
 mixin createComment(comment)
   li.comments__comment
     .comments__avatar.avatar
-      img(src='/img/avatar-1.png' alt='аватар пользователя')
+      //- img(src= comment.users.avatar alt='аватар пользователя') // user!
     .comments__text
       .comments__head
-        p Евгений Петров •
+        //- p= comment.users.name // user!
+         span •
         time.comments__date(datetime='2019-03-21T20:33')= comment.date
       p.comments__message= comment.text
 
@@ -32,20 +33,16 @@ block mainContent
         .post__wrapper
           .post__head
             a.post__backwards.button.button--backwards(href='#') Назад
-            time.post__date(datetime='2019-03-21T20:33')= article.date 
+            time.post__date(datetime='2019-03-21T20:33')= article.date
               //- 21.03.2019, 20:33
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
-              each category of categories 
+              each category of categories
                 +createCategory(category)
-              //- li.themes__item
-              //-   a.themes__item-link(href='#')
-              //-     | Автомобили
-              //-     sup 88
-              //-   button.themes__remove-btn(type='button') Удалить категорию
+
 
           .post__picture
-            img(src='/img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
+            img(src=`/img/${article.picture}` alt= article.title)
           .post__text
             h3= article.announce
             p= article.fullText
@@ -55,22 +52,19 @@ block mainContent
           h2.comments__title.title.title--middle Комментарии
           ul.comments__list
 
-            each comment of comments 
+            each comment of comments
               +createComment(comment)
-            //- li.comments__comment
-            //-   .comments__avatar.avatar
-            //-     img(src='/img/avatar-1.png' alt='аватар пользователя')
-            //-   .comments__text
-            //-     .comments__head
-            //-       p Евгений Петров •
-            //-       time.comments__date(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-            //-     p.comments__message Автор, ты все выдумал, покайся
+
 
           .comments__footer.comments__footer--user
-            form(action='#' method='POST')
+
+            form(action=`/articles/${article.id}/comments` method="post" enctype="multipart/form-data" autocomplete="off")
               .comments__avatar.avatar
                 img(src='/img/avatar-2.png' alt='аватар пользователя')
+
               label
-                textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
+                textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
               button.comments__button.button.button--colored(type='submit') Опубликовать
+
+        include ./blocks/errors
 

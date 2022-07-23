@@ -19,7 +19,7 @@ const createComments = (count, comments) => new Array(count).fill(null).map(() =
 
 const getPictureFileName = (number) => `pic-${number.toString().padStart(2, 0)}.jpg`;
 
-const generateArticles = (count, titles, categories, texts, comments) => (
+const generateArticles = (count, titles, categories, texts, comments, users) => (
   Array(count).fill(null).map(() => ({
     title: createTitle(titles),
     categories: createRandomArray(categories, TextCount.CATEGORY),
@@ -27,6 +27,8 @@ const generateArticles = (count, titles, categories, texts, comments) => (
     announce: createText(texts, TextCount.ANNOUNCE),
     fullText: createText(texts, TextCount.FULL_TEXT),
     picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)),
+
+    user: users[getRandomInt(0, users.length - 1)].email
   }))
 );
 
@@ -44,6 +46,27 @@ exports.fillDB = {
     const categories = await getTextListFromFile(FilePath.CATEGORIES);
     const comments = await getTextListFromFile(FilePath.COMMENTS);
 
+    const users = [
+      {
+        name: `user 1`,
+        email: `1@example.com`,
+        passwordHash: `passwordHash1`,
+        avatar: `avatar01.jpg`
+      },
+      {
+        name: `user 2`,
+        email: `2@example.com`,
+        passwordHash: `passwordHash2`,
+        avatar: `avatar02.jpg`
+      },
+      {
+        name: `user 3`,
+        email: `3@example.com`,
+        passwordHash: `passwordHash3`,
+        avatar: `avatar03.jpg`
+      }
+    ];
+
     const count = +args || 1;
 
 
@@ -53,9 +76,9 @@ exports.fillDB = {
     }
 
 
-    const articles = generateArticles(count, titles, categories, texts, comments);
+    const articles = generateArticles(count, titles, categories, texts, comments, users);
 
-    return initDB(sequelize, {articles, categories});
+    return initDB(sequelize, {articles, categories, users});
   }
 };
 

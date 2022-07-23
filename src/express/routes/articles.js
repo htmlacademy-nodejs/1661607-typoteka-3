@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {render, getDate, asyncHandlerClientWrapper} = require(`../../utils`);
+const {render, getDate, asyncHandlerClientWrapper, prepareErrors} = require(`../../utils`);
 const api = require(`../api`);
 
 const multer = require(`multer`);
@@ -17,6 +17,7 @@ const ArticleRoute = {
   ADD: `/add`,
   EDIT: `/edit/:id`,
   ID: `/:id`,
+  COMMENTS: `/:id/comments`
 };
 
 const UPLOAD_DIR = `../upload/img`;
@@ -24,17 +25,9 @@ const UPLOAD_DIR = `../upload/img`;
 
 const getStringQuery = (rout, query) => `${rout}?${new URLSearchParams(query).toString()}`;
 
-const getQueriesFromRedirect = (query) => {
-  if (!query) {
-    return {};
-  }
 
-  if (!query.category) {
-    return query;
-  }
+const getCheckedCategories = (allCategories, checkedIds) => allCategories.map((item) => ({...item, checked: checkedIds.some((id) => +id === item.id)}));
 
-  return {...query, category: query.category.split(`,`)};
-};
 
 const ensureArray = (value) => Array.isArray(value) ? value : [value];
 
@@ -55,13 +48,14 @@ const upload = multer({storage});
 
 const articlesRouter = new Router();
 
+
 articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) => {
   const {body, file} = req;
   const {title, announce, fullText, category} = body;
   const articleData = {
     picture: file ? file.filename : ``,
     title, announce, fullText,
-    category: ensureArray(category),
+    categories: ensureArray(category),
     comments: []
   };
 
@@ -69,8 +63,40 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) 
     await api.postArticle(articleData);
     res.redirect(`/my`);
   } catch (err) {
-    const redirectUrl = getStringQuery(`/articles/add`, articleData).toString(); // ?? не нашёл, как передать файл через query ??
-    res.redirect(redirectUrl);
+    const allCategories = await api.getCategories();
+    const categories = getCheckedCategories(allCategories, ensureArray(category));
+
+    const errors = prepareErrors(err);
+
+    res.render(Template.POST, {article: articleData, categories, errors});
+  }
+});
+
+
+articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res) => {
+  const {id} = req.params;
+  const {body, file} = req;
+  const {title, announce, fullText, category, comments} = body;
+  const articleData = {
+    picture: file ? file.filename : body[`photo`],
+    title, announce, fullText,
+    categories: ensureArray(category),
+    comments
+  };
+
+
+  try {
+    await api.putArticle(id, articleData);
+    res.redirect(`/my`);
+  } catch (err) {
+
+    const allCategories = await api.getCategories();
+    const categories = getCheckedCategories(allCategories, ensureArray(category));
+
+
+    const errors = prepareErrors(err);
+
+    res.render(Template.EDIT, {id, article: articleData, categories, errors});
   }
 });
 
@@ -78,27 +104,32 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) 
 articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerClientWrapper(render(Template.ARTICLES_BY_CATEGORY)));
 articlesRouter.get(ArticleRoute.ADD, asyncHandlerClientWrapper(async (req, res) => {
 
-  const query = getQueriesFromRedirect(req.query);
-  const checkedCategories = query.category || [];
-
   const allCategories = await api.getCategories();
-  const categories = allCategories.map((item) => ({name: item.name, checked: checkedCategories.some((cat) => cat === item.name)}));
 
-  res.render(Template.POST, {article: query, categories});
+  const categories = getCheckedCategories(allCategories, []);
+  res.render(Template.POST, {article: {}, categories});
+
+
 }));
 
 articlesRouter.get(ArticleRoute.EDIT, asyncHandlerClientWrapper(async (req, res) => {
   const {id} = req.params;
   const article = await api.getOneArticles(id);
   const allCategories = await api.getCategories();
-  const categories = allCategories.map((item) => ({...item, checked: article.categories.some((cat) => cat.name === item.name)}));
 
-  res.render(Template.POST, {article, categories});
+  const categories = getCheckedCategories(allCategories, article.categories.map((item) => item.id));
+
+  res.render(Template.EDIT, {id, article, categories});
 }));
 
 
 articlesRouter.get(ArticleRoute.ID, asyncHandlerClientWrapper(async (req, res) => {
   const {id} = req.params;
+
+  const err = req.query.err;
+  const errors = err ? err.split(`\n`) : [];
+
+
   const rawArticle = await api.getOneArticles(id);
   const allCategories = await api.getCategories(true);
 
@@ -110,7 +141,25 @@ articlesRouter.get(ArticleRoute.ID, asyncHandlerClientWrapper(async (req, res) =
   const article = {...rawArticle, date: getDate(rawArticle.createdAt, ARTICLE_DATE_FORMAT)};
   const comments = rawComments.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
 
-  res.render(Template.POST_DETAIL, {article, categories, comments});
+  res.render(Template.POST_DETAIL, {article, categories, comments, errors});
 }));
 
 module.exports = articlesRouter;
+
+
+articlesRouter.post(ArticleRoute.COMMENTS, upload.single(`upload`), async (req, res) => {
+  const {id} = req.params;
+
+
+  try {
+    await api.postComment(id, req.body);
+    res.redirect(`/articles/${id}`);
+
+  } catch (err) {
+    const errors = {err: err.response.data};
+    const redirectUrl = getStringQuery(`/articles/${id}`, errors).toString();
+    res.redirect(redirectUrl);
+  }
+
+});
+

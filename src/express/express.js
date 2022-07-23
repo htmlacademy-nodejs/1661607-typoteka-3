@@ -29,6 +29,8 @@ const app = express();
 
 const logger = getLogger({name: `client-api`});
 
+app.use(express.urlencoded({extended: false}));
+
 app.set(`views`, path.join(__dirname, `templates`));
 app.set(`view engine`, `pug`);
 

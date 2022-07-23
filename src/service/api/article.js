@@ -7,6 +7,7 @@ const addArticleToLocals = require(`../middleware/add-article-to-locals`);
 const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
 const validateArticle = require(`../middleware/validate-article`);
 const validateComment = require(`../middleware/validate-comment`);
+const validateId = require(`../middleware/validateId`);
 
 
 const ArticlesRoute = {
@@ -34,12 +35,12 @@ module.exports = (apiRouter, articleService, commentService) => {
     return res.status(HttpCode.OK).json({articles});
   }));
 
-  articleRouter.get(ArticlesRoute.ARTICLE_BY_ID, asyncHandlerWrapper(async (req, res) => {
+  articleRouter.get(ArticlesRoute.ARTICLE_BY_ID, validateId(`articleId`), asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.findOne(articleId);
 
     if (!article) {
-      return res.status(HttpCode.NOT_FOUND).send(`Not found article with ${articleId}`);
+      return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
 
     return res.status(HttpCode.OK).json(article);
@@ -56,19 +57,19 @@ module.exports = (apiRouter, articleService, commentService) => {
     const isOldArticle = await articleService.findOne(articleId);
 
     if (!isOldArticle) {
-      return res.status(HttpCode.NOT_FOUND).send(`Not found article with ${articleId}`);
+      return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
 
     const article = await articleService.update(articleId, oldArticle);
     return res.status(HttpCode.OK).json(article);
   }));
 
-  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, asyncHandlerWrapper(async (req, res) => {
+  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, validateId(`articleId`), asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
 
     if (!article) {
-      return res.status(HttpCode.NOT_FOUND).send(`Not found article with ${articleId}`);
+      return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
 
     return res.status(HttpCode.OK).json(article);
@@ -81,6 +82,7 @@ module.exports = (apiRouter, articleService, commentService) => {
   }));
 
   articleRouter.post(ArticlesRoute.COMMENTS, [validateComment, addArticleToLocals(articleService)], asyncHandlerWrapper(async (req, res) => {
+
     const {articleId} = res.locals;
 
     const comments = await commentService.create(articleId, req.body);
@@ -88,7 +90,7 @@ module.exports = (apiRouter, articleService, commentService) => {
     return res.status(HttpCode.CREATED).json(comments);
   }));
 
-  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, addArticleToLocals(articleService), asyncHandlerWrapper(async (req, res) => {
+  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, [addArticleToLocals(articleService), validateId(`commentId`)], asyncHandlerWrapper(async (req, res) => {
 
     const {commentId} = req.params;
     const comment = await commentService.drop(commentId);

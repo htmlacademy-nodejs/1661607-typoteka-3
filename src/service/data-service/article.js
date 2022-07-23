@@ -10,8 +10,10 @@ module.exports = class ArticleService {
     this._Category = sequelize.models.Category;
   }
 
-  async create(article) {
-    return await this._Article.create(article);
+  async create(data) {
+    const article = await this._Article.create(data);
+    await article.addCategories(data.categories);
+    return article.get();
   }
 
   async findAll() {
@@ -41,9 +43,12 @@ module.exports = class ArticleService {
 
 
   async update(id, article) {
-    const [affectedRows] = await this._Article.update(article, {
-      where: {id}
-    });
+    const affectedRows = await this._Article.update(article, {where: {id}});
+
+    const updatedArticle = await this._Article.findOne({where: {id}});
+
+    await updatedArticle.setCategories(article.categories);
+
     return !!affectedRows;
   }
 

@@ -32,24 +32,39 @@ class API {
     return this._load(`${ServerRoute.ARTICLES}/${id}`);
   }
 
-  getAllComments(articleId) {
-    return this._load(`${ServerRoute.ARTICLES}/${articleId}/comments`);
+  postArticle(data) {
+    return this._load(ServerRoute.ARTICLES, {method: `POST`, data});
   }
 
-  getCategories(count) {
-    return this._load(ServerRoute.CATEGORY, {params: {count}});
+  putArticle(id, data) {
+    return this._load(`${ServerRoute.ARTICLES}/${id}`, {method: `PUT`, data});
   }
+
 
   search(title) {
     return this._load(ServerRoute.SEARCH, {params: {title}});
   }
 
-  postArticle(data) {
-    return this._load(ServerRoute.ARTICLES, {method: `POST`, data});
+
+  getAllComments(articleId) {
+    return this._load(`${ServerRoute.ARTICLES}/${articleId}/comments`);
   }
 
   getCommentsByArticleId(articleId) {
     return this._load(`${ServerRoute.ARTICLES}/${articleId}/comments`);
+  }
+
+  postComment(id, data) {
+    return this._load(`${ServerRoute.ARTICLES}/${id}/comments`, {method: `POST`, data});
+  }
+
+
+  getCategories(count) {
+    return this._load(ServerRoute.CATEGORY, {params: {count}});
+  }
+
+  postCategory(data) {
+    return this._load(ServerRoute.CATEGORY, {method: `POST`, data});
   }
 }
 

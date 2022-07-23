@@ -3,6 +3,7 @@
 const express = require(`express`);
 const session = require(`express-session`);
 const {red, green} = require(`chalk`);
+const helmet = require(`helmet`);
 const {getLogger} = require(`../lib/logger`);
 const sequelize = require(`../lib/sequelize`);
 const {Command, HttpCode} = require(`../../const`);
@@ -43,6 +44,15 @@ exports.server = {
       proxy: true,
     }));
 
+    app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: [`'self'`]
+        }
+      },
+      xssFilter: true,
+    }));
+
     app.use(express.json());
     app.use((req, res, next) => {
       logger.debug(`Request on route ${req.url}`);
@@ -54,18 +64,18 @@ exports.server = {
 
 
     app.use(`/api`, await runRouter());
-    app.get(`/`, (req, res) => {
-      let {counter = 0} = req.session;
-      counter++;
+    // app.get(`/`, (req, res) => {
+    //   let {counter = 0} = req.session;
+    //   counter++;
 
-      const welcomeText = `Это ваш первый визит на наш сайт.`;
-      const text = `Вы посетили наш сайт уже ${counter} раз`;
+    //   const welcomeText = `Это ваш первый визит на наш сайт.`;
+    //   const text = `Вы посетили наш сайт уже ${counter} раз`;
 
-      const message = counter === 1 ? welcomeText : text;
-      req.session.counter = counter;
+    //   const message = counter === 1 ? welcomeText : text;
+    //   req.session.counter = counter;
 
-      res.send(message);
-    });
+    //   res.send(message);
+    // });
 
     app.use((req, res) => {
       res.status(HttpCode.NOT_FOUND).send(`Not found`);

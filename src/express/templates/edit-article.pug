@@ -13,9 +13,9 @@ block mainContent
     section
       .popup.popup--new-publication.popup--anti
         .new-publication
-          form(action="/articles/add" method="post" enctype="multipart/form-data" autocomplete="off")
+          form(action=`/articles/edit/${id}` method="post" enctype="multipart/form-data" autocomplete="off")
             .new-publication__header
-              h1 Новая публикация
+              h1 Править публикацию
               .new-publication__date-form
                 h3 Дата публикации
                 .new-publication__date-form-division
@@ -31,7 +31,7 @@ block mainContent
                     input(type='text' name='title' placeholder='Заголовок' value= article.title required)
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly)
+                    input#image-name-field(type='text' name='photo' placeholder='Фотография'  value= article.picture readonly)
                   .form__image-loader.form__image-loader--publication
                     label
                       input.visually-hidden(type='file' name='upload')
@@ -50,6 +50,4 @@ block mainContent
                   label
                     textarea(rows='10' name='fullText' placeholder='Полный текст публикации')= article.fullText
 
-
-              include ./blocks/errors
-
+                include ./blocks/errors

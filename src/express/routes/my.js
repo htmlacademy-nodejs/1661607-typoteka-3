@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {render, asyncHandlerClientWrapper} = require(`../../utils`);
+const {asyncHandlerClientWrapper, prepareErrors} = require(`../../utils`);
 const api = require(`../api`);
 
 
@@ -12,14 +12,11 @@ const MyRoute = {
   CATEGORIES: `/categories`
 };
 
-const categoryContent = {
-  categories: [`Жизнь и путешествия`, `Путешествия`, `Дизайн и программирование`, `Другое`, `Личное`]
-};
-
 
 const createCommentWithTitle = (comments, articleTitle) => comments.map((item) => ({...item, articleTitle}));
 
 const myRouter = new Router();
+
 
 myRouter.get(MyRoute.MAIN, asyncHandlerClientWrapper(async (req, res) => {
   const {articles} = await api.getAllArticles({});
@@ -32,6 +29,26 @@ myRouter.get(MyRoute.COMMENTS, asyncHandlerClientWrapper(async (req, res) => {
   res.render(Template.COMMENTS, {comments: commentsWitArticleTitle});
 }));
 
-myRouter.get(MyRoute.CATEGORIES, render(Template.ALL_CATEGORIES, {categories: categoryContent}));
+
+myRouter.get(MyRoute.CATEGORIES, asyncHandlerClientWrapper(async (req, res) => {
+  const categories = await api.getCategories();
+  res.render(Template.ALL_CATEGORIES, {categories});
+}));
+
+
+myRouter.post(MyRoute.CATEGORIES, async (req, res) => {
+
+  try {
+    await api.postCategory(req.body);
+    const categories = await api.getCategories();
+    res.render(Template.ALL_CATEGORIES, {categories});
+  } catch (err) {
+    const categories = await api.getCategories();
+    const errors = prepareErrors(err);
+    res.render(Template.ALL_CATEGORIES, {categories, errors});
+  }
+
+
+});
 
 module.exports = myRouter;

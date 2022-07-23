@@ -1,5 +1,7 @@
 'use strict';
 
+const {Aliase} = require(`../../const`);
+
 
 module.exports = class CommentService {
 
@@ -9,6 +11,7 @@ module.exports = class CommentService {
   }
 
   async create(articleId, comment) {
+
     return await this._Comment.create({...comment, articleId});
   }
 
@@ -17,10 +20,13 @@ module.exports = class CommentService {
   }
 
   async findAll(articleId) {
-    return await this._Comment.findAll({
+    const comments = await this._Comment.findAll({
       where: {articleId},
-      order: [[`createdAt`, `ASC`]]
+      order: [[`createdAt`, `ASC`]],
+      include: [Aliase.USERS],
     });
+
+    return comments.map((item) => item.get());
   }
 
   async drop(id) {
