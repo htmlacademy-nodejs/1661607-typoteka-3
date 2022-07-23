@@ -23,17 +23,17 @@ exports.articleSchema = Joi.object({
     [JoiMessageKey.STRING_MIN]: Message.ANNOUNCE_MIN,
     [JoiMessageKey.STRING_MAX]: Message.ANNOUNCE_MAX
   }),
-  fullText: Joi.string().max(1000).allow(``).messages({
+  fullText: Joi.string().max(1000).allow(``).optional().messages({
     [JoiMessageKey.STRING_MAX]: Message.FULL_TEXT_MAX
   }),
   picture: Joi.string().regex(/.+\.jpg\b|.+\.png\b/).allow(``).message({
     [JoiMessageKey.REGEXP]: Message.PICTURE
   }),
-  categories: Joi.array().items(
+  categories: Joi.array().required().items(
       Joi.number().integer().positive()
       .messages({
         [JoiMessageKey.NUMBER_BASE]: Message.CATEGORIES
       })
   ),
-  comments: Joi.array()
+  comments: Joi.array().optional()
 });

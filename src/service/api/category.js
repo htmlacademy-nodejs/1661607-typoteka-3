@@ -3,7 +3,6 @@
 const {Router} = require(`express`);
 const {HttpCode, ServerRoute} = require(`../../const`);
 const {asyncHandlerWrapper} = require(`../../utils`);
-// const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
 const validateCategory = require(`../middleware/validate-category`);
 
 

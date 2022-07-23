@@ -59,6 +59,7 @@ module.exports = (apiRouter, articleService, commentService) => {
 
   articleRouter.post(ArticlesRoute.MAIN, validateArticle, asyncHandlerWrapper(async (req, res) => {
     const article = await articleService.create(req.body);
+
     return res.status(HttpCode.CREATED).json(article);
   }));
 

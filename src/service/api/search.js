@@ -4,7 +4,6 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../const`);
 const {asyncHandlerWrapper} = require(`../../utils`);
-// const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
 
 
 module.exports = (apiRouter, service) => {

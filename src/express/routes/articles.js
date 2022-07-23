@@ -103,9 +103,6 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res)
 });
 
 
-// articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerWrapper(render(Template.ARTICLES_BY_CATEGORY)));
-
-
 articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerWrapper(createMainHandler(api)));
 
 

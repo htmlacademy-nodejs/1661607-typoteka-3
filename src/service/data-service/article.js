@@ -12,6 +12,7 @@ module.exports = class ArticleService {
     this._sequelize = sequelize;
   }
 
+
   async create(data) {
     const article = await this._Article.create(data);
     await article.addCategories(data.categories);
@@ -26,20 +27,6 @@ module.exports = class ArticleService {
 
     return articles.map((item) => item.get());
   }
-
-  // SELECT title, articles.id, string_agg(name, ', ') AS names FROM articles
-  // JOIN article_categories on articles.id = "article_categories"."ArticleId"
-  // JOIN categories ON categories.id = "article_categories"."CategoryId"
-  // JOIN comments ON "comments"."articleId" = articles.id
-  // WHERE articles.id IN
-  // (
-  //   SELECT articles.id FROM articles
-  //   JOIN article_categories on articles.id = "article_categories"."ArticleId"
-  //   JOIN categories ON categories.id = "article_categories"."CategoryId"
-  //   where categories.id = 11
-  // )
-
-  // group by title, articles.id;
 
 
   async findPage({limit, offset, categoryId}) {

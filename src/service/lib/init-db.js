@@ -15,7 +15,7 @@ const initDB = async (sequelize, {categories, articles, users}) => {
 
   const categoryIdByName = categoryModels.reduce((acc, item) => ({[item.name]: item.id, ...acc}), {}); // [{it: 1}, {games: 2},...]
 
-  const userIdByEmail = userModels.reduce((acc, item) => ({[item.email]: item.id, ...acc}), {}); // [{it: 1}, {games: 2},...]
+  const userIdByEmail = userModels.reduce((acc, item) => ({[item.email]: item.id, ...acc}), {});
 
 
   articles.forEach((item) => {

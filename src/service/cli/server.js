@@ -64,18 +64,6 @@ exports.server = {
 
 
     app.use(`/api`, await runRouter());
-    // app.get(`/`, (req, res) => {
-    //   let {counter = 0} = req.session;
-    //   counter++;
-
-    //   const welcomeText = `Это ваш первый визит на наш сайт.`;
-    //   const text = `Вы посетили наш сайт уже ${counter} раз`;
-
-    //   const message = counter === 1 ? welcomeText : text;
-    //   req.session.counter = counter;
-
-    //   res.send(message);
-    // });
 
     app.use((req, res) => {
       res.status(HttpCode.NOT_FOUND).send(`Not found`);
@@ -93,10 +81,6 @@ exports.server = {
         logger.info(green(`data server: Ожидаю соединений на ${port}`));
       })
       .on(`error`, ({message}) => logger.error(red(`data server: Ошибка при создании сервера, ${message}`)));
-
-    (async () => {
-      await sequelize.sync({force: false});
-    })();
   }
 };
 

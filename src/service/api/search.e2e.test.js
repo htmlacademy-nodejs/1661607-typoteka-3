@@ -5,7 +5,7 @@ const express = require(`express`);
 const request = require(`supertest`);
 const search = require(`./search`);
 const SearchService = require(`../data-service/search`);
-const {MOCK_ARTICLES, SearchArticleFragment, CATEGORIES} = require(`../../tests/mocks`);
+const {MOCK_ARTICLES, SearchArticleFragment, CATEGORIES, MOCK_USERS} = require(`../../tests/mocks`);
 const {HttpCode, ServerRoute} = require(`../../const`);
 const initDB = require(`../lib/init-db`);
 const Sequelize = require(`sequelize`);
@@ -17,7 +17,8 @@ app.use(express.json());
 
 
 beforeAll(async () => {
-  await initDB(mockDB, {categories: CATEGORIES, articles: MOCK_ARTICLES});
+  await initDB(mockDB, {articles: MOCK_ARTICLES, categories: CATEGORIES, users: MOCK_USERS});
+
   search(app, new SearchService(mockDB));
 });
 
