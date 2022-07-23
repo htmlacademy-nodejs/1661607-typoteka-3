@@ -2,7 +2,8 @@
 
 const {Router} = require(`express`);
 const {HttpCode, ServerRoute} = require(`../../const`);
-const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
+const {asyncHandlerWrapper} = require(`../../utils`);
+// const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
 const validateCategory = require(`../middleware/validate-category`);
 
 
@@ -17,12 +18,15 @@ module.exports = (apiRouter, service) => {
     return res.status(HttpCode.OK).json(categories);
   }));
 
+
   categoryRouter.post(`/`, validateCategory, asyncHandlerWrapper(async (req, res) => {
 
     const categories = await service.create(req.body);
 
     return res.status(HttpCode.OK).json(categories);
   }));
+
+
 };
 
 

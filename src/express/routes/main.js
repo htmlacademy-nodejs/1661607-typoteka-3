@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {render, asyncHandlerClientWrapper} = require(`../../utils`);
+const {render, asyncHandlerWrapper} = require(`../../utils`);
 const api = require(`../api`);
 
 
@@ -19,8 +19,8 @@ const MainRoute = {
 
 const mainRouter = new Router();
 
-mainRouter.get(MainRoute.LOGIN, asyncHandlerClientWrapper(render(Template.LOGIN)));
-mainRouter.get(MainRoute.MAIN, asyncHandlerClientWrapper(async (req, res) => {
+mainRouter.get(MainRoute.LOGIN, asyncHandlerWrapper(render(Template.LOGIN)));
+mainRouter.get(MainRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
 
   const page = +req.query.page || 1;
 
@@ -28,15 +28,16 @@ mainRouter.get(MainRoute.MAIN, asyncHandlerClientWrapper(async (req, res) => {
 
   const categories = await api.getCategories(true);
   const {articles, count} = await api.getAllArticles({limit: LIMIT_ARTICLES, offset});
+  console.log(articles.map((i) => i.categories));
 
   const totalPage = Math.ceil(+count / LIMIT_ARTICLES);
   const pages = new Array(totalPage).fill(null).map((_, i) => i + 1);
   res.render(Template.MAIN, {title: `Типотека`, articles, count, pages, page, totalPage, categories});
 }));
 
-mainRouter.get(MainRoute.REGISTER, asyncHandlerClientWrapper(render(Template.SIGN_UP)));
+mainRouter.get(MainRoute.REGISTER, asyncHandlerWrapper(render(Template.SIGN_UP)));
 
-mainRouter.get(MainRoute.SEARCH, asyncHandlerClientWrapper(async (req, res) => {
+mainRouter.get(MainRoute.SEARCH, asyncHandlerWrapper(async (req, res) => {
   const {title} = req.query;
 
   if (!title) {

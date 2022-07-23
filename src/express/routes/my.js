@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {asyncHandlerClientWrapper, prepareErrors} = require(`../../utils`);
+const {asyncHandlerWrapper, prepareErrors} = require(`../../utils`);
 const api = require(`../api`);
 
 
@@ -18,19 +18,19 @@ const createCommentWithTitle = (comments, articleTitle) => comments.map((item) =
 const myRouter = new Router();
 
 
-myRouter.get(MyRoute.MAIN, asyncHandlerClientWrapper(async (req, res) => {
+myRouter.get(MyRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
   const {articles} = await api.getAllArticles({});
   res.render(Template.MY, {articles});
 }));
 
-myRouter.get(MyRoute.COMMENTS, asyncHandlerClientWrapper(async (req, res) => {
+myRouter.get(MyRoute.COMMENTS, asyncHandlerWrapper(async (req, res) => {
   const {articles} = await api.getAllArticles({});
   const commentsWitArticleTitle = articles.reduce((acc, item) => ([...acc, ...createCommentWithTitle(item.comments, item.title)]), []);
   res.render(Template.COMMENTS, {comments: commentsWitArticleTitle});
 }));
 
 
-myRouter.get(MyRoute.CATEGORIES, asyncHandlerClientWrapper(async (req, res) => {
+myRouter.get(MyRoute.CATEGORIES, asyncHandlerWrapper(async (req, res) => {
   const categories = await api.getCategories();
   res.render(Template.ALL_CATEGORIES, {categories});
 }));

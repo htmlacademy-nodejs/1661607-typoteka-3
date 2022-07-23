@@ -21,9 +21,10 @@ class API {
   }
 
 
-  getAllArticles({limit, offset}) {
+  getAllArticles({limit, offset, categoryId}) {
     if (limit !== undefined && offset !== undefined) {
-      return this._load(ServerRoute.ARTICLES, {params: {limit, offset}});
+      console.log(categoryId, categoryId);
+      return this._load(ServerRoute.ARTICLES, {params: {limit, offset, categoryId}});
     }
     return this._load(ServerRoute.ARTICLES);
   }

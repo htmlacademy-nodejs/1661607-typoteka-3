@@ -47,6 +47,15 @@ app.use((req, res) => {
   logger.error(`Route not found: ${req.url}`);
 });
 
+app.use((error, _req, res, _next) => {
+  if (error.response && error.response.status === 404) {
+    logger.error(`error 404: ${error.response.data}`);
+    return res.render(Template.ERR_404, {error: error.response.data});
+  }
+  logger.error(`error 500: ${error}`);
+  return res.render(Template.ERR_500, {error});
+});
+
 app.listen(PORT)
   .on(`listening`, () => console.info(green(`front server: Ожидаю соединений на ${PORT}`)))
   .on(`error`, ({message}) => console.error(red(`front server: Ошибка при создании сервера, ${message}`)));

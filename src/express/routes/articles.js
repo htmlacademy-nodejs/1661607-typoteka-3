@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {render, getDate, asyncHandlerClientWrapper, prepareErrors} = require(`../../utils`);
+const {render, getDate, asyncHandlerWrapper, prepareErrors} = require(`../../utils`);
 const api = require(`../api`);
 
 const multer = require(`multer`);
@@ -11,6 +11,8 @@ const {nanoid} = require(`nanoid`);
 
 
 const ARTICLE_DATE_FORMAT = `DD.MM.YYYY, HH:MM`;
+const LIMIT_ARTICLES = 8;
+
 
 const ArticleRoute = {
   CATEGORY: `/category/:id`,
@@ -101,8 +103,30 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res)
 });
 
 
-articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerClientWrapper(render(Template.ARTICLES_BY_CATEGORY)));
-articlesRouter.get(ArticleRoute.ADD, asyncHandlerClientWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerWrapper(render(Template.ARTICLES_BY_CATEGORY)));
+
+
+// articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerWrapper(async (req, res) => {
+
+//   const {id} = req.params;
+
+//   console.log(id);
+
+//   const page = +req.query.page || 1;
+
+//   const offset = (page - 1) * LIMIT_ARTICLES;
+
+//   const categories = await api.getCategories(true);
+//   const {articles, count} = await api.getAllArticles({limit: LIMIT_ARTICLES, offset, categoryId: id});
+
+//   const totalPage = Math.ceil(+count / LIMIT_ARTICLES);
+//   const pages = new Array(totalPage).fill(null).map((_, i) => i + 1);
+//   res.render(Template.MAIN, {title: `Типотека`, articles, count, pages, page, totalPage, categories});
+//   // res.render(Template.ARTICLES_BY_CATEGORY);
+// }));
+
+
+articlesRouter.get(ArticleRoute.ADD, asyncHandlerWrapper(async (req, res) => {
 
   const allCategories = await api.getCategories();
 
@@ -112,7 +136,7 @@ articlesRouter.get(ArticleRoute.ADD, asyncHandlerClientWrapper(async (req, res) 
 
 }));
 
-articlesRouter.get(ArticleRoute.EDIT, asyncHandlerClientWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.EDIT, asyncHandlerWrapper(async (req, res) => {
   const {id} = req.params;
   const article = await api.getOneArticles(id);
   const allCategories = await api.getCategories();
@@ -123,7 +147,7 @@ articlesRouter.get(ArticleRoute.EDIT, asyncHandlerClientWrapper(async (req, res)
 }));
 
 
-articlesRouter.get(ArticleRoute.ID, asyncHandlerClientWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.ID, asyncHandlerWrapper(async (req, res) => {
   const {id} = req.params;
 
   const err = req.query.err;

@@ -3,8 +3,8 @@
 
 const {Router} = require(`express`);
 const {HttpCode, ServerRoute} = require(`../../const`);
+const {asyncHandlerWrapper} = require(`../../utils`);
 const addArticleToLocals = require(`../middleware/add-article-to-locals`);
-const asyncHandlerWrapper = require(`../middleware/async-handler-wrapper`);
 const validateArticle = require(`../middleware/validate-article`);
 const validateComment = require(`../middleware/validate-comment`);
 const validateId = require(`../middleware/validateId`);
@@ -25,9 +25,11 @@ module.exports = (apiRouter, articleService, commentService) => {
 
   articleRouter.get(ArticlesRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
 
-    const {limit, offset} = req.query;
+    const {limit, offset, categoryId} = req.query;
+
+    console.log(categoryId, categoryId, categoryId);
     if (limit && offset) {
-      const {articles, count} = await articleService.findPage({limit, offset});
+      const {articles, count} = await articleService.findPage({limit, offset, categoryId});
       return res.status(HttpCode.OK).json({articles, count});
     }
 
