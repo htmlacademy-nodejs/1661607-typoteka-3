@@ -21,7 +21,7 @@ module.exports = class CommentService {
 
   async findAll(limit) {
     const comments = await this._Comment.findAll({
-      include: [Aliase.USERS],
+      include: [Aliase.USERS, Aliase.ARTICLES],
       limit
     });
 

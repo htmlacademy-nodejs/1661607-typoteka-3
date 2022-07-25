@@ -10,33 +10,34 @@ mixin createTheme(theme, count, categoryId)
         sup= count
 
 
-mixin createPopArticle(title, comments)
+mixin createPopArticle(title, comments, id)
   li.hot__list-item
-    a.hot__list-link(href='#')= title
+    a.hot__list-link(href= `/articles/${id}`)= title
       sup.hot__link-sup= comments.length
 
 
 mixin createPreviewCategory(item)
   li.preview__breadcrumbs-item
-    a.preview__breadcrumbs-link(href='#')= item
+    a.preview__breadcrumbs-link(href=`/articles/category/${item.id}`)= item.name
 
 
-mixin createPreviewArticle(title, announce, category, comments, createdDate)
+
+mixin createPreviewArticle(article)
   li.preview__item
     ul.preview__breadcrumbs
-      each item of category
-        +createPreviewCategory(item.name)
+      each item of article.categories
+        +createPreviewCategory(item)
     .preview__background
-      img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба')
-    time.preview__time(datetime='2019-03-21T20:33')= createdDate
+      img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt= article.title)
+    time.preview__time(datetime='2019-03-21T20:33')= article.createdDate
     h3.preview__name
-      a.preview__name-link(href='#')= title
-    p.preview__text= announce
-    a.preview__comment(href='#')
+      a.preview__name-link(href= `/articles/${article.id}`)= article.title
+    p.preview__text= article.announce
+    a.preview__comment(href= `/articles/${article.id}#comment-anchor`)
       | Комментарии
       span.preview__cloud
       |
-      b.preview__comment-count= comments.length
+      b.preview__comment-count= article.comments.length
 
 
 mixin createPage(page, active)
@@ -66,7 +67,7 @@ mixin createComment(comment)
   li.last__list-item
     img.last__list-image(src=`img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
     b.last__list-name= comment.users.name
-    a.last__list-link(href='#')= comment.text
+    a.last__list-link(href=`/articles/${comment.articles.id}#comment-anchor`)= comment.text
     
 
 block headerContent
@@ -101,7 +102,7 @@ block mainContent
 
             if (articles)
               each article of articles
-                +createPopArticle(article.title, article.comments)
+                +createPopArticle(article.title, article.comments, article.id)
 
 
         section.main-page__last.last
@@ -123,7 +124,7 @@ block mainContent
 
           if (articles)
             each article of articles
-              +createPreviewArticle(article.title, article.announce, article.categories, article.comments, article.createdDate)
+              +createPreviewArticle(article)
 
       if (totalPage && page)
         .preview__toggle-wrapper

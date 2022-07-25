@@ -4,7 +4,7 @@
 const dayjs = require(`dayjs`);
 const {readFile} = require(`fs`).promises;
 const {nanoid} = require(`nanoid`);
-const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode} = require(`./const`);
+const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode, HttpCode} = require(`./const`);
 
 
 const COMMENT_COUNT = 5;
@@ -114,6 +114,15 @@ const asyncHandlerWrapper = (fn) => async (req, res, next) => {
 
 const prepareErrors = (error) => error.response.data.split(`\n`);
 
+const validateData = (schema, data, res, next) => {
+  const {error} = schema.validate(data, {abortEarly: false});
+  if (error) {
+    return res.status(HttpCode.BAD_REQUEST).send(error.details.map((err) => err.message).join(`\n`));
+  }
+
+  return next();
+};
+
 
 module.exports = {
   shuffle, getRandomInt,
@@ -123,5 +132,5 @@ module.exports = {
   checkFields, getFormatDate, getDate,
   connectToDB,
   asyncHandlerWrapper,
-  prepareErrors
+  prepareErrors, validateData
 };
