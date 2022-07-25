@@ -8,6 +8,17 @@ module.exports = class CommentService {
   constructor(sequelize) {
     this._Comment = sequelize.models.Comment;
     this._Article = sequelize.models.Article;
+    this._User = sequelize.models.User;
+  }
+
+  _getUserWithoutPassword() {
+    return {
+      model: this._User,
+      as: Aliase.USERS,
+      attributes: {
+        exclude: [`passwordHash`]
+      }
+    };
   }
 
   async create(articleId, comment) {
@@ -20,8 +31,12 @@ module.exports = class CommentService {
   }
 
   async findAll(limit) {
+
     const comments = await this._Comment.findAll({
-      include: [Aliase.USERS, Aliase.ARTICLES],
+      include: [
+        Aliase.ARTICLES,
+        this._getUserWithoutPassword()
+      ],
       limit
     });
 
@@ -32,7 +47,7 @@ module.exports = class CommentService {
     const comments = await this._Comment.findAll({
       where: {articleId},
       order: [[`createdAt`, `ASC`]],
-      include: [Aliase.USERS],
+      include: [this._getUserWithoutPassword()],
     });
 
     return comments.map((item) => item.get());

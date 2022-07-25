@@ -9,7 +9,6 @@ module.exports = class ArticleService {
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._Category = sequelize.models.Category;
-    this._sequelize = sequelize;
   }
 
 

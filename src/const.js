@@ -94,9 +94,11 @@ const JoiMessageKey = {
   STRING_MAX: `string.max`,
   STRING_EMPTY: `string.empty`,
   REQUIRED: `any.required`,
+  ANY_ONLY: `any.only`,
   NUMBER_MIN: `number.min`,
   NUMBER_BASE: `number.base`,
-  REGEXP: `string.pattern.base`
+  REGEXP: `string.pattern.base`,
+  EMAIL: `string.email`
 };
 
 const LIMIT_ARTICLES = 8;
