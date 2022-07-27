@@ -2,16 +2,18 @@
 'use strict';
 
 const dayjs = require(`dayjs`);
+const multer = require(`multer`);
 const {readFile} = require(`fs`).promises;
 const {nanoid} = require(`nanoid`);
+const path = require(`path`);
 const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode, HttpCode} = require(`./const`);
 
 
 const COMMENT_COUNT = 5;
 
 
-const getTextListFromFile = async (path) => {
-  const content = await readFile(path, `utf-8`);
+const getTextListFromFile = async (filePath) => {
+  const content = await readFile(filePath, `utf-8`);
   return content.trim().split(`\n`);
 };
 
@@ -123,6 +125,21 @@ const validateData = (schema, data, res, next) => {
   return next();
 };
 
+const createImageUploader = (dir) => {
+  const destination = path.resolve(__dirname, `./express/upload/img/${dir}`);
+
+  const storage = multer.diskStorage({
+    destination,
+    filename: (req, file, cb) => {
+      const name = nanoid(10);
+      const extension = file.originalname.split(`.`).pop();
+      cb(null, `${name}.${extension}`);
+    }
+  });
+
+  return multer({storage});
+};
+
 
 module.exports = {
   shuffle, getRandomInt,
@@ -132,5 +149,6 @@ module.exports = {
   checkFields, getFormatDate, getDate,
   connectToDB,
   asyncHandlerWrapper,
-  prepareErrors, validateData
+  prepareErrors, validateData,
+  createImageUploader
 };

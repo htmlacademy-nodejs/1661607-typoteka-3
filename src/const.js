@@ -73,7 +73,8 @@ const ID_LENGTH = 8;
 const ServerRoute = {
   ARTICLES: `/articles`,
   CATEGORY: `/category`,
-  SEARCH: `/search`
+  SEARCH: `/search`,
+  USER: `/user`,
 };
 
 const Env = {
@@ -104,11 +105,18 @@ const JoiMessageKey = {
 const LIMIT_ARTICLES = 8;
 const LIMIT_COMMENTS = 4;
 
+const MENU = [
+  {href: `/`, name: `Главная`},
+  {href: `/articles/add`, name: `Добавить статью`},
+  {href: `/my/categories`, name: `Категории`},
+  {href: `/search`, name: `Поиск`},
+];
+
 
 module.exports = {
   ID_LENGTH, DATE_FORMAT, WRITE_FILE_NAME,
   LIMIT_ARTICLES, LIMIT_COMMENTS,
   Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env,
   Aliase,
-  JoiMessageKey
+  JoiMessageKey, MENU
 };

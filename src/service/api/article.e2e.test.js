@@ -107,12 +107,21 @@ describe(`API refuses to create an article if data is invalid`, () => {
   // test(`Without any required property response code is 400`, async () => {
   //   const newArticle = {...protoArticle};
   //   for (const key of Object.keys(newArticle)) {
-  //     const badArticle = {...protoArticle};
-  //     delete badArticle[key];
-  //     await request(app)
-  //       .post(ServerRoute.ARTICLES)
-  //       .send(badArticle)
-  //       .expect(HttpCode.BAD_REQUEST);
+  //     if (key === `picture`) {
+  //       const badArticle = {...protoArticle};
+  //       delete badArticle[key];
+  //       await request(app)
+  //         .post(ServerRoute.ARTICLES)
+  //         .send(badArticle)
+  //         .expect(HttpCode.CREATED);
+  //     } else {
+  //       const badArticle = {...protoArticle};
+  //       delete badArticle[key];
+  //       await request(app)
+  //         .post(ServerRoute.ARTICLES)
+  //         .send(badArticle)
+  //         .expect(HttpCode.BAD_REQUEST);
+  //     }
   //   }
   // });
 

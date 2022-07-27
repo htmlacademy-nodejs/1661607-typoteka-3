@@ -5,7 +5,7 @@ mixin createTheme(theme, count, categoryId)
   li.themes__item
     if id == categoryId
       a.themes__item-link.themes__item-link--active
-    else 
+    else
       a.themes__item-link(href= `/articles/category/${categoryId}`)= theme
         sup= count
 
@@ -55,11 +55,11 @@ mixin createArrowPage(backwards, page, totalPage)
       if page == 1
         a.pagination__button.button.button--backwards.button--disabled(href='#' aria-label='Страница назад') Назад
       else
-        a.pagination__button.button.button--backwards(href=`?page=${page - 1}` aria-label='Страница назад') Назад  
-    else 
+        a.pagination__button.button.button--backwards(href=`?page=${page - 1}` aria-label='Страница назад') Назад
+    else
       if page == totalPage
         a.pagination__button.button.button--forward.button--disabled(href='#' aria-label='Страница вперед') Вперед
-      else 
+      else
         a.pagination__button.button.button--forward(href=`?page=${page + 1}` aria-label='Страница вперед') Вперед
 
 
@@ -68,22 +68,22 @@ mixin createComment(comment)
     img.last__list-image(src=`img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
     b.last__list-name= comment.users.name
     a.last__list-link(href=`/articles/${comment.articles.id}#comment-anchor`)= comment.text
-    
+
 
 block headerContent
-  include ./headers/header-sign-out
+  //- include ./headers/header-sign-out
   //- include ./headers/header-sign-in
-  //- include ./headers/header-admin
+  include ./headers/header-admin
 
 
 block mainContent
   main.main-page
-      
+
       h1.visually-hidden Главная страница личного блога Типотека
       p.
 
         Это приветственный текст, который владелец блога может выбрать, чтобы описать себя 👏
-        
+
       section.main-page__theme-list
         h2.visually-hidden Список тем
         ul.themes
@@ -113,7 +113,7 @@ block mainContent
           ul.last__list
 
             if (comments)
-              each comment of comments 
+              each comment of comments
                 +createComment(comment)
 
 
@@ -131,7 +131,7 @@ block mainContent
           ul.preview__pagination.pagination
             +createArrowPage(1, page, totalPage)
 
-            each item of pages 
+            each item of pages
               +createPage(item, item == page)
 
             +createArrowPage(0, page, totalPage)

@@ -1,0 +1,13 @@
+mixin createMenuItem(item)
+  li.navigation__item
+    a(href= item.href)= item.name
+
+
+.header__dropdown
+  a.button.button--burger.header__burger(href='#') Открыть меню
+  ul.navigation.header__navigation
+
+    - const menu = [{href: `/`, name: `Главная`},{href: `/articles/add`, name: `Добавить статью`},{href: `/my/categories`, name: `Категории`},{href: `/search`, name: `Поиск`}];
+      each item of menu
+        +createMenuItem(item)
+

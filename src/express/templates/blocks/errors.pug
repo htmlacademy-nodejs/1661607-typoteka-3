@@ -1,4 +1,10 @@
 if (errors)
-  ul
-    each error of errors
-      li= error
+  .form__validation-error
+    if (errorTitle)
+      p.form__error-message= errorTitle
+    else
+      p.form__error-message Так не пойдет:
+    ul.form__errors
+      each error of errors
+        li.form__error= error
+

@@ -2,12 +2,9 @@
 
 const {Router} = require(`express`);
 const {Template} = require(`../../const`);
-const {getDate, asyncHandlerWrapper, prepareErrors} = require(`../../utils`);
+const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader} = require(`../../utils`);
 const api = require(`../api`);
 
-const multer = require(`multer`);
-const path = require(`path`);
-const {nanoid} = require(`nanoid`);
 const {createMainHandler} = require(`./route-utils`);
 
 
@@ -22,7 +19,7 @@ const ArticleRoute = {
   COMMENTS: `/:id/comments`
 };
 
-const UPLOAD_DIR = `../upload/img`;
+const UPLOAD_DIR = `articles`;
 
 
 const getStringQuery = (rout, query) => `${rout}?${new URLSearchParams(query).toString()}`;
@@ -34,18 +31,19 @@ const getCheckedCategories = (allCategories, checkedIds) => allCategories.map((i
 const ensureArray = (value) => Array.isArray(value) ? value : [value];
 
 
-const destination = path.resolve(__dirname, UPLOAD_DIR);
+// const destination = path.resolve(__dirname, UPLOAD_DIR);
 
-const storage = multer.diskStorage({
-  destination,
-  filename: (req, file, cb) => {
-    const name = nanoid(10);
-    const extension = file.originalname.split(`.`).pop();
-    cb(null, `${name}.${extension}`);
-  }
-});
 
-const upload = multer({storage});
+// const storage = multer.diskStorage({
+//   destination,
+//   filename: (req, file, cb) => {
+//     const name = nanoid(10);
+//     const extension = file.originalname.split(`.`).pop();
+//     cb(null, `${name}.${extension}`);
+//   }
+// });
+
+const upload = createImageUploader(UPLOAD_DIR);
 
 
 const articlesRouter = new Router();
@@ -54,6 +52,7 @@ const articlesRouter = new Router();
 articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) => {
   const {body, file} = req;
   const {title, announce, fullText, category} = body;
+
   const articleData = {
     picture: file ? file.filename : ``,
     title, announce, fullText,
@@ -80,7 +79,7 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res)
   const {body, file} = req;
   const {title, announce, fullText, category, comments} = body;
   const articleData = {
-    picture: file ? file.filename : body[`photo`],
+    picture: file ? file.filename : body.photo,
     title, announce, fullText,
     categories: ensureArray(category),
     comments
@@ -131,7 +130,7 @@ articlesRouter.get(ArticleRoute.ID, asyncHandlerWrapper(async (req, res) => {
   const {id} = req.params;
 
   const err = req.query.err;
-  const errors = err ? err.split(`\n`) : [];
+  const errors = err ? err.split(`\n`) : null;
 
 
   const rawArticle = await api.getOneArticles(id);

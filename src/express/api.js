@@ -66,6 +66,10 @@ class API {
   postCategory(data) {
     return this._load(ServerRoute.CATEGORY, {method: `POST`, data});
   }
+
+  postUser(data) {
+    return this._load(ServerRoute.USER, {method: `POST`, data});
+  }
 }
 
 

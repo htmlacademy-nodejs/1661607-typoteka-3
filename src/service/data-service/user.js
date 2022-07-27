@@ -5,7 +5,7 @@ module.exports = class UserService {
     this._User = sequelize.models.User;
   }
 
-  async createUser(data) {
+  async create(data) {
     const user = await this._User.create(data);
     return user.get();
   }

@@ -48,19 +48,22 @@ exports.fillDB = {
 
     const users = [
       {
-        name: `user 1`,
+        firstName: `firstName 1`,
+        lastName: `lastName 1`,
         email: `1@example.com`,
         passwordHash: `passwordHash1`,
         avatar: `avatar01.jpg`
       },
       {
-        name: `user 2`,
+        firstName: `firstName 2`,
+        lastName: `lastName 2`,
         email: `2@example.com`,
         passwordHash: `passwordHash2`,
         avatar: `avatar02.jpg`
       },
       {
-        name: `user 3`,
+        firstName: `firstName 2`,
+        lastName: `lastName 2`,
         email: `3@example.com`,
         passwordHash: `passwordHash3`,
         avatar: `avatar03.jpg`
