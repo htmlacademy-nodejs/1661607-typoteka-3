@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require(`express`);
-const session = require(`express-session`);
 const {red, green} = require(`chalk`);
 const helmet = require(`helmet`);
 const {getLogger} = require(`../lib/logger`);
@@ -9,8 +8,6 @@ const sequelize = require(`../lib/sequelize`);
 const {Command, HttpCode} = require(`../../const`);
 const {runRouter} = require(`../api`);
 const {connectToDB} = require(`../../utils`);
-
-const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 
 
 const DEFAULT_PORT = 3000;
@@ -26,23 +23,6 @@ exports.server = {
     await connectToDB(sequelize, logger);
 
     const app = express();
-
-    const mySessionStore = new SequelizeStore({
-      db: sequelize,
-      expiration: 180000,
-      checkExpirationInterval: 60000,
-      tableName: `sessions`
-    });
-
-    app.use(session({
-      secret: `super_secret`,
-      resave: false,
-      saveUninitialized: false,
-      // name: `session_id`,
-      // cookie: {maxAge: 2 * 24 * 60 * 1000},
-      store: mySessionStore,
-      proxy: true,
-    }));
 
     app.use(helmet({
       contentSecurityPolicy: {

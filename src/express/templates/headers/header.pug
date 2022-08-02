@@ -1,0 +1,6 @@
+if (user && user.id == 4)
+  include header-admin
+if (user && user.id != 4)
+  include header-sign-in
+if (!user)
+  include header-sign-out

@@ -4,7 +4,7 @@
   "description": "Типотека",
   "main": "./src/service/service.js",
   "scripts": {
-    "start-front-server": "nodemon ./src/express/express.js",
+    "start-front-server": "cross-env NODE_DB=true nodemon -r dotenv/config  ./src/express/express.js",
     "start": "cross-env NODE_ENV=production NODE_DB=true node -r dotenv/config ./src/service/service.js --server",
     "start::debug": "cross-env NODE_ENV=development NODE_DB=true nodemon -r dotenv/config ./src/service/service.js --server",
     "filldb": "cross-env NODE_DB=true node -r dotenv/config  ./src/service/service.js --fillDB",

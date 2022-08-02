@@ -1,6 +1,6 @@
 'use strict';
 
-const {Op} = require(`sequelize`);
+const {Op, QueryTypes} = require(`sequelize`);
 const {Aliase} = require(`../../const`);
 
 
@@ -9,6 +9,7 @@ module.exports = class ArticleService {
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._Category = sequelize.models.Category;
+    this._sequelize = sequelize;
   }
 
 
@@ -28,7 +29,24 @@ module.exports = class ArticleService {
   }
 
 
-  async findPage({limit, offset, categoryId}) {
+  async findPage({limit, offset, categoryId, top}) {
+
+
+    if (top) {
+      const articles = await this._sequelize.query(
+          `
+          SELECT articles.title, articles.id, COUNT(comments.id) FROM articles
+          JOIN comments ON "comments"."articleId" = articles.id
+          GROUP BY articles.title, articles.id
+          ORDER BY count DESC
+          LIMIT :limit
+          `,
+          {
+            replacements: {limit: top},
+            type: QueryTypes.SELECT
+          });
+      return articles;
+    }
 
 
     if (categoryId) {

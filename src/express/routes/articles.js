@@ -1,14 +1,11 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {Template} = require(`../../const`);
-const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader} = require(`../../utils`);
+const {Template, ARTICLE_DATE_FORMAT} = require(`../../const`);
+const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader, adminMiddleware, redirectWithErrors, getErrorsFromQuery} = require(`../../utils`);
 const api = require(`../api`);
 
 const {createMainHandler} = require(`./route-utils`);
-
-
-const ARTICLE_DATE_FORMAT = `DD.MM.YYYY, HH:MM`;
 
 
 const ArticleRoute = {
@@ -22,26 +19,11 @@ const ArticleRoute = {
 const UPLOAD_DIR = `articles`;
 
 
-const getStringQuery = (rout, query) => `${rout}?${new URLSearchParams(query).toString()}`;
-
-
 const getCheckedCategories = (allCategories, checkedIds) => allCategories.map((item) => ({...item, checked: checkedIds.some((id) => +id === item.id)}));
 
 
 const ensureArray = (value) => Array.isArray(value) ? value : [value];
 
-
-// const destination = path.resolve(__dirname, UPLOAD_DIR);
-
-
-// const storage = multer.diskStorage({
-//   destination,
-//   filename: (req, file, cb) => {
-//     const name = nanoid(10);
-//     const extension = file.originalname.split(`.`).pop();
-//     cb(null, `${name}.${extension}`);
-//   }
-// });
 
 const upload = createImageUploader(UPLOAD_DIR);
 
@@ -93,8 +75,6 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res)
 
     const allCategories = await api.getCategories();
     const categories = getCheckedCategories(allCategories, ensureArray(category));
-
-
     const errors = prepareErrors(err);
 
     res.render(Template.EDIT, {id, article: articleData, categories, errors});
@@ -105,7 +85,7 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res)
 articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerWrapper(createMainHandler(api)));
 
 
-articlesRouter.get(ArticleRoute.ADD, asyncHandlerWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.ADD, adminMiddleware, asyncHandlerWrapper(async (req, res) => {
 
   const allCategories = await api.getCategories();
 
@@ -115,7 +95,7 @@ articlesRouter.get(ArticleRoute.ADD, asyncHandlerWrapper(async (req, res) => {
 
 }));
 
-articlesRouter.get(ArticleRoute.EDIT, asyncHandlerWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.EDIT, adminMiddleware, asyncHandlerWrapper(async (req, res) => {
   const {id} = req.params;
   const article = await api.getOneArticles(id);
   const allCategories = await api.getCategories();
@@ -127,10 +107,10 @@ articlesRouter.get(ArticleRoute.EDIT, asyncHandlerWrapper(async (req, res) => {
 
 
 articlesRouter.get(ArticleRoute.ID, asyncHandlerWrapper(async (req, res) => {
+  const {user} = req.session;
   const {id} = req.params;
 
-  const err = req.query.err;
-  const errors = err ? err.split(`\n`) : null;
+  const errors = getErrorsFromQuery(req);
 
 
   const rawArticle = await api.getOneArticles(id);
@@ -144,7 +124,7 @@ articlesRouter.get(ArticleRoute.ID, asyncHandlerWrapper(async (req, res) => {
   const article = {...rawArticle, date: getDate(rawArticle.createdAt, ARTICLE_DATE_FORMAT)};
   const comments = rawComments.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
 
-  res.render(Template.POST_DETAIL, {article, categories, comments, errors});
+  res.render(Template.POST_DETAIL, {article, categories, comments, errors, user});
 }));
 
 module.exports = articlesRouter;
@@ -153,15 +133,17 @@ module.exports = articlesRouter;
 articlesRouter.post(ArticleRoute.COMMENTS, upload.single(`upload`), async (req, res) => {
   const {id} = req.params;
 
+  const {user} = req.session;
+
+  const data = {...req.body, userId: user.id};
+
 
   try {
-    await api.postComment(id, req.body);
+    await api.postComment(id, data);
     res.redirect(`/articles/${id}`);
 
   } catch (err) {
-    const errors = {err: err.response.data};
-    const redirectUrl = getStringQuery(`/articles/${id}`, errors).toString();
-    res.redirect(redirectUrl);
+    redirectWithErrors(res, err, `/articles/${id}`);
   }
 
 });

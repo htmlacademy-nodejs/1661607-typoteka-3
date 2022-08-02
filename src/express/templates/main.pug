@@ -10,11 +10,6 @@ mixin createTheme(theme, count, categoryId)
         sup= count
 
 
-mixin createPopArticle(title, comments, id)
-  li.hot__list-item
-    a.hot__list-link(href= `/articles/${id}`)= title
-      sup.hot__link-sup= comments.length
-
 
 mixin createPreviewCategory(item)
   li.preview__breadcrumbs-item
@@ -63,17 +58,11 @@ mixin createArrowPage(backwards, page, totalPage)
         a.pagination__button.button.button--forward(href=`?page=${page + 1}` aria-label='Страница вперед') Вперед
 
 
-mixin createComment(comment)
-  li.last__list-item
-    img.last__list-image(src=`img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
-    b.last__list-name= comment.users.name
-    a.last__list-link(href=`/articles/${comment.articles.id}#comment-anchor`)= comment.text
+
 
 
 block headerContent
-  //- include ./headers/header-sign-out
-  //- include ./headers/header-sign-in
-  include ./headers/header-admin
+  include ./headers/header
 
 
 block mainContent
@@ -92,30 +81,11 @@ block mainContent
             +createTheme(category.name, category.count, category.id)
 
 
-      .main-page__section-flex
-        section.main-page__hot.hot
-          h2.hot__name
-            | Самое обсуждаемое
-            span.hot__icon.hot__icon--fire
+      if (isMain)
+        include blocks/main-top
 
-          ul.hot__list
-
-            if (articles)
-              each article of articles
-                +createPopArticle(article.title, article.comments, article.id)
-
-
-        section.main-page__last.last
-          h2.last__name
-            | Последние комментарии
-            span.last__icon.last__icon--cloud
-
-          ul.last__list
-
-            if (comments)
-              each comment of comments
-                +createComment(comment)
-
+      if(!articles || !articles.length)
+        include blocks/empty
 
       section.main-page__list.preview
         h2.visually-hidden Список превью статей
@@ -135,4 +105,6 @@ block mainContent
               +createPage(item, item == page)
 
             +createArrowPage(0, page, totalPage)
+
+
 

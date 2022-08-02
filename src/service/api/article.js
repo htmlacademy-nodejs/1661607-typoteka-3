@@ -15,8 +15,7 @@ const ArticlesRoute = {
   ARTICLE_BY_ID: `/:articleId`,
   COMMENTS_IN_ARTICLE: `/:articleId/comments`,
   COMMENTS: `/comments`,
-
-  COMMENT_BY_ID: `/:articleId/comments/:commentId`
+  COMMENT_BY_ID: `/comments/:commentId`,
 };
 
 
@@ -35,7 +34,12 @@ module.exports = (apiRouter, articleService, commentService) => {
 
   articleRouter.get(ArticlesRoute.MAIN, asyncHandlerWrapper(async (req, res) => {
 
-    const {limit, offset, categoryId} = req.query;
+    const {limit, offset, categoryId, top} = req.query;
+
+    if (top) {
+      const articles = await articleService.findPage({top});
+      return res.status(HttpCode.OK).json(articles);
+    }
 
     if (limit && offset) {
       const {articles, count} = await articleService.findPage({limit, offset, categoryId});
@@ -102,7 +106,8 @@ module.exports = (apiRouter, articleService, commentService) => {
     return res.status(HttpCode.CREATED).json(comments);
   }));
 
-  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, [addArticleToLocals(articleService), validateId(`commentId`)], asyncHandlerWrapper(async (req, res) => {
+
+  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, validateId(`commentId`), asyncHandlerWrapper(async (req, res) => {
 
     const {commentId} = req.params;
     const comment = await commentService.drop(commentId);

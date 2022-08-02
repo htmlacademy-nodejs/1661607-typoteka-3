@@ -5,7 +5,9 @@ mixin createMyArticle(createdDate, title, id)
   li.notes__list-item
     time.notes__item-time(datetime= createdDate)= createdDate
     a.notes__item-text(href=`/articles/${id}`)= title
-    button.notes__button.button.button--close-item(type='button')
+    //- button.notes__button.button.button--close-item(type='button')
+    a.notes__button.button.button--close-item(href= `/my/articles-delete/${id}`)
+
       span.visually-hidden Закрыть строку списка
 
 block headerContent
@@ -15,6 +17,10 @@ block mainContent
   main.main-page.main-page--padding
     section.main-page__notes.notes
       h1.notes__title Мои записи
+
+      include blocks/errors
+
+
       ul.notes__list
         each article of articles
           +createMyArticle(article.createdDate, article.title, article.id)

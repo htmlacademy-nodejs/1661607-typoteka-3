@@ -21,12 +21,16 @@ class API {
   }
 
 
-  getAllArticles({limit, offset, categoryId}) {
+  getAllArticles({limit, offset, categoryId, top}) {
+    if (top) {
+      return this._load(ServerRoute.ARTICLES, {params: {top}});
+    }
     if (limit !== undefined && offset !== undefined) {
       return this._load(ServerRoute.ARTICLES, {params: {limit, offset, categoryId}});
     }
     return this._load(ServerRoute.ARTICLES);
   }
+
 
   getOneArticles(id) {
     return this._load(`${ServerRoute.ARTICLES}/${id}`);
@@ -38,6 +42,10 @@ class API {
 
   putArticle(id, data) {
     return this._load(`${ServerRoute.ARTICLES}/${id}`, {method: `PUT`, data});
+  }
+
+  deleteArticle(id) {
+    return this._load(`${ServerRoute.ARTICLES}/${id}`, {method: `DELETE`});
   }
 
 
@@ -58,6 +66,10 @@ class API {
     return this._load(`${ServerRoute.ARTICLES}/${id}/comments`, {method: `POST`, data});
   }
 
+  deleteComment(id) {
+    return this._load(`${ServerRoute.COMMENTS}/${id}`, {method: `DELETE`});
+  }
+
 
   getCategories(count) {
     return this._load(ServerRoute.CATEGORY, {params: {count}});
@@ -67,8 +79,20 @@ class API {
     return this._load(ServerRoute.CATEGORY, {method: `POST`, data});
   }
 
+  putCategory(id, data) {
+    return this._load(`${ServerRoute.CATEGORY}/${id}`, {method: `PUT`, data});
+  }
+
+  deleteCategory(id) {
+    return this._load(`${ServerRoute.CATEGORY}/${id}`, {method: `DELETE`});
+  }
+
   postUser(data) {
     return this._load(ServerRoute.USER, {method: `POST`, data});
+  }
+
+  auth(data) {
+    return this._load(ServerRoute.AUTH, {method: `POST`, data});
   }
 }
 

@@ -6,7 +6,7 @@ const multer = require(`multer`);
 const {readFile} = require(`fs`).promises;
 const {nanoid} = require(`nanoid`);
 const path = require(`path`);
-const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode, HttpCode} = require(`./const`);
+const {PublicationDate, DATE_FORMAT, TextCount, FilePath, ID_LENGTH, ExitCode, HttpCode, ADMIN_ID} = require(`./const`);
 
 
 const COMMENT_COUNT = 5;
@@ -125,6 +125,7 @@ const validateData = (schema, data, res, next) => {
   return next();
 };
 
+
 const createImageUploader = (dir) => {
   const destination = path.resolve(__dirname, `./express/upload/img/${dir}`);
 
@@ -140,6 +141,30 @@ const createImageUploader = (dir) => {
   return multer({storage});
 };
 
+const adminMiddleware = (req, res, next) => {
+
+  const {user} = req.session;
+
+  if (user && user.id === ADMIN_ID) {
+    return next();
+  }
+  return res.status(HttpCode.FORBIDDEN).redirect(`/`);
+};
+
+
+const getStringQuery = (rout, query) => `${rout}?${new URLSearchParams(query).toString()}`;
+
+const redirectWithErrors = (res, err, url) => {
+  const errors = {err: err.response.data};
+  const redirectUrl = getStringQuery(url, errors);
+  res.redirect(redirectUrl);
+};
+
+const getErrorsFromQuery = (req) => {
+  const err = req.query.err;
+  return err ? err.split(`\n`) : null;
+};
+
 
 module.exports = {
   shuffle, getRandomInt,
@@ -149,6 +174,7 @@ module.exports = {
   checkFields, getFormatDate, getDate,
   connectToDB,
   asyncHandlerWrapper,
-  prepareErrors, validateData,
-  createImageUploader
+  prepareErrors, validateData, adminMiddleware,
+  createImageUploader,
+  getStringQuery, redirectWithErrors, getErrorsFromQuery
 };

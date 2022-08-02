@@ -37,6 +37,7 @@ module.exports = class CommentService {
         Aliase.ARTICLES,
         this._getUserWithoutPassword()
       ],
+      order: [[`createdAt`, `DESC`]],
       limit
     });
 

@@ -22,6 +22,7 @@ const PublicationDate = {
 };
 
 const DATE_FORMAT = `YYYY-MM-DD HH:MM:ss`;
+const ARTICLE_DATE_FORMAT = `DD.MM.YYYY, HH:MM`;
 
 const WRITE_FILE_NAME = `mocks.json`;
 
@@ -72,9 +73,11 @@ const ID_LENGTH = 8;
 
 const ServerRoute = {
   ARTICLES: `/articles`,
+  COMMENTS: `/articles/comments`,
   CATEGORY: `/category`,
   SEARCH: `/search`,
   USER: `/user`,
+  AUTH: `/user/auth`
 };
 
 const Env = {
@@ -105,18 +108,17 @@ const JoiMessageKey = {
 const LIMIT_ARTICLES = 8;
 const LIMIT_COMMENTS = 4;
 
-const MENU = [
-  {href: `/`, name: `Главная`},
-  {href: `/articles/add`, name: `Добавить статью`},
-  {href: `/my/categories`, name: `Категории`},
-  {href: `/search`, name: `Поиск`},
-];
 
+const ADMIN_ID = 4;
+
+
+const NOT_DROP_CATEGORY_MESSAGE = `cannot be deleted. there are articles in this category`;
 
 module.exports = {
-  ID_LENGTH, DATE_FORMAT, WRITE_FILE_NAME,
+  ID_LENGTH, DATE_FORMAT, ARTICLE_DATE_FORMAT, WRITE_FILE_NAME,
   LIMIT_ARTICLES, LIMIT_COMMENTS,
   Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env,
   Aliase,
-  JoiMessageKey, MENU
+  JoiMessageKey, ADMIN_ID,
+  NOT_DROP_CATEGORY_MESSAGE
 };

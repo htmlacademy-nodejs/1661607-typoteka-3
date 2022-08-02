@@ -4,11 +4,13 @@ mixin createComment(comment)
   li.publication__list-item
     .publication__header
       img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
-      b.publication__list-name Александр Петров
+      b.publication__list-name= `${comment.users.firstName} ${comment.users.lastName}`
       time.publication__item-time(datetime= comment.date)= comment.date
     a.publication__item-text(href='#')= comment.articleTitle
     p.publication__text-strong= comment.text
-    button.publication__button.button.button--close-item(type='button')
+    //- button.publication__button.button.button--close-item(type='button')
+    a.publication__button.button.button--close-item(href=  `/my/comments-delete/${comment.id}`)
+
       span.visually-hidden Закрыть строку списка
 
 block headerContent
@@ -18,6 +20,10 @@ block mainContent
   main.main-page.main-page--padding
     section.main-page__publication.publication
       h1.publication__title Комментарии
+
+      include blocks/errors
+
+
       ul.publication__list
         each comment of comments
           +createComment(comment)

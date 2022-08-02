@@ -10,17 +10,17 @@ mixin createTheme(theme, count, categoryId)
 mixin createComment(comment)
   li.comments__comment
     .comments__avatar.avatar
-      //- img(src= comment.users.avatar alt='аватар пользователя') // user - auth
+      img(src=`/img/avatars/${comment.users.avatar}`  alt='аватар пользователя')
     .comments__text
       .comments__head
-        //- p= `${comment.users.firstName} ${comment.users.lastName} • ` // user - auth
+        p= `${comment.users.firstName} ${comment.users.lastName} • `
         time.comments__date(datetime='2019-03-21T20:33')= comment.date
       p.comments__message= comment.text
 
 
 
 block headerContent
-  include ./headers/header-sign-in
+  include ./headers/header
 
 
 block mainContent
@@ -55,16 +55,17 @@ block mainContent
             each comment of comments
               +createComment(comment)
 
+          include ./blocks/comment
 
-          .comments__footer.comments__footer--user
+          //- .comments__footer.comments__footer--user
 
-            form(action=`/articles/${article.id}/comments` method="post" enctype="multipart/form-data" autocomplete="off")
-              .comments__avatar.avatar
-                img(src='/img/avatar-2.png' alt='аватар пользователя')
+          //-   form(action=`/articles/${article.id}/comments` method="post" enctype="multipart/form-data" autocomplete="off")
+          //-     .comments__avatar.avatar
+          //-       img(src='/img/avatar-2.png' alt='аватар пользователя')
 
-              label
-                textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
-              button.comments__button.button.button--colored(type='submit') Опубликовать
+          //-     label
+          //-       textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
+          //-     button.comments__button.button.button--colored(type='submit') Опубликовать
 
         include ./blocks/errors
 

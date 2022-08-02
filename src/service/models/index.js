@@ -28,7 +28,7 @@ const defineModels = (sequelize) => {
 
   Article.belongsToMany(Category, {through: ArticleCategories, as: Aliase.CATEGORIES});
   Category.belongsToMany(Article, {through: ArticleCategories, as: Aliase.ARTICLES});
-  Category.hasMany(ArticleCategories, {as: Aliase.ARTICLE_CATEGORIES});
+  Category.hasMany(ArticleCategories, {as: Aliase.ARTICLE_CATEGORIES, onDelete: `restrict`}); // ??? не работает  onDelete: `restrict`
 
   User.hasMany(Article, {as: Aliase.ARTICLES, foreignKey: `userId`, onDelete: `cascade`});
   Article.belongsTo(User, {as: Aliase.USERS, foreignKey: `userId`});

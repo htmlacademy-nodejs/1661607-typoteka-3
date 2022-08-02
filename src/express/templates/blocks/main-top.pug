@@ -1,0 +1,39 @@
+mixin createPopArticle(title, count, id)
+  li.hot__list-item
+    a.hot__list-link(href= `/articles/${id}`)= title
+      sup.hot__link-sup= count
+
+mixin createComment(comment)
+  li.last__list-item
+    img.last__list-image(src=`img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
+    b.last__list-name= comment.users.name
+    a.last__list-link(href=`/articles/${comment.articles.id}#comment-anchor`)= comment.text
+
+
+.main-page__section-flex
+  section.main-page__hot.hot
+    h2.hot__name
+      | Самое обсуждаемое
+      span.hot__icon.hot__icon--fire
+
+    ul.hot__list
+
+      if (topArticles && topArticles.length)
+        each article of topArticles
+          +createPopArticle(article.title, article.count, article.id)
+      else
+        include small-empty
+
+
+  section.main-page__last.last
+    h2.last__name
+      | Последние комментарии
+      span.last__icon.last__icon--cloud
+
+    ul.last__list
+
+      if (comments && comments.length)
+        each comment of comments
+          +createComment(comment)
+      else
+        include small-empty
