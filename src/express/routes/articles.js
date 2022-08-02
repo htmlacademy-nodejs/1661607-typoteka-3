@@ -4,9 +4,10 @@ const {Router} = require(`express`);
 const {Template, ARTICLE_DATE_FORMAT} = require(`../../const`);
 const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader, adminMiddleware, redirectWithErrors, getErrorsFromQuery} = require(`../../utils`);
 const api = require(`../api`);
-
 const {createMainHandler} = require(`./route-utils`);
 
+const csrf = require(`csurf`);
+const csrfProtection = csrf();
 
 const ArticleRoute = {
   CATEGORY: `/category/:id`,
@@ -31,7 +32,7 @@ const upload = createImageUploader(UPLOAD_DIR);
 const articlesRouter = new Router();
 
 
-articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) => {
+articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), csrfProtection, async (req, res) => {
   const {body, file} = req;
   const {title, announce, fullText, category} = body;
 
@@ -51,12 +52,12 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), async (req, res) 
 
     const errors = prepareErrors(err);
 
-    res.render(Template.POST, {article: articleData, categories, errors});
+    res.render(Template.POST, {article: articleData, categories, errors, csrfToken: req.csrfToken()});
   }
 });
 
 
-articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res) => {
+articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), csrfProtection, async (req, res) => {
   const {id} = req.params;
   const {body, file} = req;
   const {title, announce, fullText, category, comments} = body;
@@ -77,36 +78,36 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), async (req, res)
     const categories = getCheckedCategories(allCategories, ensureArray(category));
     const errors = prepareErrors(err);
 
-    res.render(Template.EDIT, {id, article: articleData, categories, errors});
+    res.render(Template.EDIT, {id, article: articleData, categories, errors, csrfToken: req.csrfToken()});
   }
 });
 
 
-articlesRouter.get(ArticleRoute.CATEGORY, asyncHandlerWrapper(createMainHandler(api)));
+articlesRouter.get(ArticleRoute.CATEGORY, csrfProtection, asyncHandlerWrapper(createMainHandler(api)));
 
 
-articlesRouter.get(ArticleRoute.ADD, adminMiddleware, asyncHandlerWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.ADD, adminMiddleware, csrfProtection, asyncHandlerWrapper(async (req, res) => {
 
   const allCategories = await api.getCategories();
 
   const categories = getCheckedCategories(allCategories, []);
-  res.render(Template.POST, {article: {}, categories});
+  res.render(Template.POST, {article: {}, categories, csrfToken: req.csrfToken()});
 
 
 }));
 
-articlesRouter.get(ArticleRoute.EDIT, adminMiddleware, asyncHandlerWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.EDIT, adminMiddleware, csrfProtection, asyncHandlerWrapper(async (req, res) => {
   const {id} = req.params;
   const article = await api.getOneArticles(id);
   const allCategories = await api.getCategories();
 
   const categories = getCheckedCategories(allCategories, article.categories.map((item) => item.id));
 
-  res.render(Template.EDIT, {id, article, categories});
+  res.render(Template.EDIT, {id, article, categories, csrfToken: req.csrfToken()});
 }));
 
 
-articlesRouter.get(ArticleRoute.ID, asyncHandlerWrapper(async (req, res) => {
+articlesRouter.get(ArticleRoute.ID, csrfProtection, asyncHandlerWrapper(async (req, res) => {
   const {user} = req.session;
   const {id} = req.params;
 
@@ -124,18 +125,18 @@ articlesRouter.get(ArticleRoute.ID, asyncHandlerWrapper(async (req, res) => {
   const article = {...rawArticle, date: getDate(rawArticle.createdAt, ARTICLE_DATE_FORMAT)};
   const comments = rawComments.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
 
-  res.render(Template.POST_DETAIL, {article, categories, comments, errors, user});
+  res.render(Template.POST_DETAIL, {article, categories, comments, errors, user, csrfToken: req.csrfToken()});
 }));
 
 module.exports = articlesRouter;
 
 
-articlesRouter.post(ArticleRoute.COMMENTS, upload.single(`upload`), async (req, res) => {
+articlesRouter.post(ArticleRoute.COMMENTS, upload.single(`upload`), csrfProtection, async (req, res) => {
   const {id} = req.params;
 
   const {user} = req.session;
 
-  const data = {...req.body, userId: user.id};
+  const data = {text: req.body.text, userId: user.id};
 
 
   try {

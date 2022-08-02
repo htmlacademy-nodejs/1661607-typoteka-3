@@ -14,6 +14,7 @@ block mainContent
       .popup.popup--new-publication.popup--anti
         .new-publication
           form(action=`/articles/edit/${id}` method="post" enctype="multipart/form-data" autocomplete="off")
+            input(type="hidden" name="_csrf" value=csrfToken)
             .new-publication__header
               h1 Править публикацию
               .new-publication__date-form

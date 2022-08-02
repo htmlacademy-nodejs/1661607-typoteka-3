@@ -2,6 +2,7 @@
   h1 Поиск
   .search.search-page__form
     form(action='#' method='get')
+      input(type="hidden" name="_csrf" value=csrfToken)
       label
         input(type='text' name='title' placeholder='Что ищем?')
       button.search__button.button.button--transparent(type='submit') Найти

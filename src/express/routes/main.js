@@ -1,11 +1,13 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {Template, MENU} = require(`../../const`);
+const {Template} = require(`../../const`);
 const {asyncHandlerWrapper, createImageUploader, prepareErrors} = require(`../../utils`);
 const api = require(`../api`);
 const {createMainHandler} = require(`./route-utils`);
 
+const csrf = require(`csurf`);
+const csrfProtection = csrf();
 
 const UPLOAD_DIR = `avatars`;
 
@@ -49,7 +51,7 @@ mainRouter.get(MainRoute.LOGOUT, (req, res) => {
   res.redirect(MainRoute.MAIN);
 });
 
-mainRouter.get(MainRoute.MAIN, asyncHandlerWrapper(createMainHandler(api, true)));
+mainRouter.get(MainRoute.MAIN, csrfProtection, asyncHandlerWrapper(createMainHandler(api, true)));
 
 mainRouter.post(MainRoute.REGISTER, upload.single(`avatar`), async (req, res) => {
 
@@ -74,7 +76,7 @@ mainRouter.get(MainRoute.REGISTER, asyncHandlerWrapper(async (req, res) => {
 }));
 
 
-mainRouter.get(MainRoute.SEARCH, asyncHandlerWrapper(async (req, res) => {
+mainRouter.get(MainRoute.SEARCH, csrfProtection, asyncHandlerWrapper(async (req, res) => {
   const {user} = req.session;
   const {title} = req.query;
 
@@ -83,9 +85,9 @@ mainRouter.get(MainRoute.SEARCH, asyncHandlerWrapper(async (req, res) => {
   } else {
     try {
       const result = await api.search(title);
-      res.render(Template.SEARCH, {articles: result, title, menu: `MENU`, user});
+      res.render(Template.SEARCH, {articles: result, title, user, csrfToken: req.csrfToken()});
     } catch (err) {
-      res.render(Template.SEARCH, {articles: null, title, menu: MENU, user});
+      res.render(Template.SEARCH, {articles: null, title, user, csrfToken: req.csrfToken()});
     }
   }
 }));

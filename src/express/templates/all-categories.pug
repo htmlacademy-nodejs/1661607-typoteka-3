@@ -3,6 +3,7 @@ extends ./layouts/wrapper-color
 mixin createCategory(category)
   li.category__list-item
     form(action= `/my/categories-edit/${category.id}` method='POST')
+      input(type="hidden" name="_csrf" value=csrfToken)
       input#modify-form-category-1(type='text' name="name" value= category.name)
       //- label(for='modify-form-category-1')
       //-   span.visually-hidden Редактировать категорию
@@ -24,6 +25,7 @@ block mainContent
 
       .category__add-form
         form(action='#' method='POST')
+          input(type="hidden" name="_csrf" value=csrfToken)
           input#add-form-add-category(type='text' name='name' placeholder='Новая категория')
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
