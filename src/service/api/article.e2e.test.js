@@ -15,7 +15,7 @@ const initDB = require(`../lib/init-db`);
 
 const mockArticle = MOCK_ARTICLES[0];
 const commentsOfFirstArticleRout = `${ServerRoute.ARTICLES}/${1}/comments`;
-const firstCommentOfFirstArticleRout = `${commentsOfFirstArticleRout}/${1}`;
+const firstComment = `${ServerRoute.COMMENTS}/${1}`;
 const protoArticle = {
   title: `new mock title 111111111111111111111111111111111111111111111111`,
   fullText: `new mock fullText`,
@@ -259,9 +259,7 @@ describe(`API returns a list of comments to given article`, () => {
 
 describe(`API creates a comment if data is valid`, () => {
 
-  const newComment = {
-    text: `test comment 11111111111111111111`
-  };
+  const newComment = {text: `test comment 11111111111111111111`, userId: 2};
 
   let app;
   let response;
@@ -292,9 +290,7 @@ test(`API refuses to create a comment to non-existent article and returns status
 
   return request(app)
     .post(`${ServerRoute.ARTICLES}/FAKE_ID/comments`)
-    .send({
-      text: `Неважно 11111111111111111111111111111111111`
-    })
+    .send({text: `Неважно 11111111111111111111111111111111111`, userId: 2})
     .expect(HttpCode.NOT_FOUND);
 
 });
@@ -320,7 +316,7 @@ describe(`API correctly deletes a comment`, () => {
   beforeAll(async () => {
     app = await createAPI();
     response = await request(app)
-      .delete(firstCommentOfFirstArticleRout);
+      .delete(firstComment);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
