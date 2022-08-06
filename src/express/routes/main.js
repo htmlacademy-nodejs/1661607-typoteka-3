@@ -47,8 +47,7 @@ mainRouter.post(MainRoute.LOGIN, async (req, res) => {
 });
 
 mainRouter.get(MainRoute.LOGOUT, (req, res) => {
-  delete req.session.user;
-  res.redirect(MainRoute.MAIN);
+  req.session.destroy(() => res.redirect(MainRoute.MAIN));
 });
 
 mainRouter.get(MainRoute.MAIN, csrfProtection, asyncHandlerWrapper(createMainHandler(api, true)));
