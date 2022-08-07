@@ -15,7 +15,6 @@ const ArticleRoute = {
   EDIT: `/edit/:id`,
   ID: `/:id`,
   COMMENTS: `/:id/comments`,
-  BACK: `/back`
 };
 
 const UPLOAD_DIR = `articles`;
