@@ -24,7 +24,8 @@ const myRouter = new Router();
 
 myRouter.get(MyRoute.MAIN, adminMiddleware, csrfProtection, asyncHandlerWrapper(async (req, res) => {
   const errors = getErrorsFromQuery(req);
-  const {articles} = await api.getAllArticles({});
+  const {articles: rawArticles} = await api.getAllArticles({});
+  const articles = rawArticles.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
   res.render(Template.MY, {articles, errors, csrfToken: req.csrfToken()});
 }));
 

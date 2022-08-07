@@ -6,7 +6,7 @@ mixin createPopArticle(title, count, id)
 mixin createComment(comment)
   li.last__list-item
     img.last__list-image(src=`img/avatars/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
-    b.last__list-name= comment.users.name
+    b.last__list-name= `${comment.users.firstName} ${comment.users.lastName}`
     a.last__list-link(href=`/articles/${comment.articles.id}#comment-anchor`)= comment.text
 
 

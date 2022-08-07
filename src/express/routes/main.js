@@ -1,8 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {Template} = require(`../../const`);
-const {asyncHandlerWrapper, createImageUploader, prepareErrors} = require(`../../utils`);
+const {Template, ARTICLE_DATE_FORMAT} = require(`../../const`);
+const {asyncHandlerWrapper, createImageUploader, prepareErrors, getDate} = require(`../../utils`);
 const api = require(`../api`);
 const {createMainHandler} = require(`./route-utils`);
 
@@ -83,8 +83,9 @@ mainRouter.get(MainRoute.SEARCH, csrfProtection, asyncHandlerWrapper(async (req,
     res.render(Template.SEARCH, {articles: [], title: ``, user});
   } else {
     try {
-      const result = await api.search(title);
-      res.render(Template.SEARCH, {articles: result, title, user, csrfToken: req.csrfToken()});
+      const results = await api.search(title);
+      const articles = results.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
+      res.render(Template.SEARCH, {articles, title, user, csrfToken: req.csrfToken()});
     } catch (err) {
       res.render(Template.SEARCH, {articles: null, title, user, csrfToken: req.csrfToken()});
     }

@@ -1,6 +1,7 @@
 'use strict';
 
-const {Template, LIMIT_ARTICLES, LIMIT_COMMENTS} = require(`../../const`);
+const {Template, LIMIT_ARTICLES, LIMIT_COMMENTS, ARTICLE_DATE_FORMAT} = require(`../../const`);
+const {getDate} = require(`../../utils`);
 
 
 const createMainHandler = (api, isMain) => async (req, res) => {
@@ -14,7 +15,8 @@ const createMainHandler = (api, isMain) => async (req, res) => {
   const offset = (page - 1) * LIMIT_ARTICLES;
 
   const categories = await api.getCategories(true);
-  const {articles, count} = await api.getAllArticles({limit: LIMIT_ARTICLES, offset, categoryId: id});
+  const {articles: rawArticles, count} = await api.getAllArticles({limit: LIMIT_ARTICLES, offset, categoryId: id});
+  const articles = rawArticles.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
   const topArticles = isMain ? await api.getAllArticles({top: 4}) : null;
 
   const comments = isMain ? await api.getAllComments(LIMIT_COMMENTS) : null;

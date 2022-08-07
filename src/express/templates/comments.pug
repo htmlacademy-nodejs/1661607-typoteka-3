@@ -6,7 +6,7 @@ mixin createComment(comment)
       img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
       b.publication__list-name= `${comment.users.firstName} ${comment.users.lastName}`
       time.publication__item-time(datetime= comment.date)= comment.date
-    a.publication__item-text(href='#')= comment.articleTitle
+    a.publication__item-text(href= `/articles/${comment.articles.id}`)= comment.articles.title
     p.publication__text-strong= comment.text
     //- button.publication__button.button.button--close-item(type='button')
     a.publication__button.button.button--close-item(href=  `/my/comments-delete/${comment.id}`)

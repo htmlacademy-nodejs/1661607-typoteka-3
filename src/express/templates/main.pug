@@ -4,7 +4,7 @@ extends ./layouts/wrapper
 mixin createTheme(theme, count, categoryId)
   li.themes__item
     if id == categoryId
-      a.themes__item-link.themes__item-link--active
+      a.themes__item-link.themes__item-link--active= theme
     else
       a.themes__item-link(href= `/articles/category/${categoryId}`)= theme
         sup= count
@@ -18,13 +18,16 @@ mixin createPreviewCategory(item)
 
 
 mixin createPreviewArticle(article)
-  li.preview__item
+  li(class= `preview__item ${article.picture ? '': 'preview__item--noimage'}`)
     ul.preview__breadcrumbs
       each item of article.categories
         +createPreviewCategory(item)
-    .preview__background
-      img.preview__background-image(src='img/skyscraper@1x.jpg' width='460' height='240' srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x' alt= article.title)
-    time.preview__time(datetime='2019-03-21T20:33')= article.createdDate
+
+    if (article.picture)
+      .preview__background
+        img.preview__background-image(src= `/img/articles/${article.picture}` width='460' height='240' alt= article.title)
+
+    time.preview__time(datetime='2019-03-21T20:33')= article.date
     h3.preview__name
       a.preview__name-link(href= `/articles/${article.id}`)= article.title
     p.preview__text= article.announce
@@ -73,7 +76,7 @@ block mainContent
 
         Это приветственный текст, который владелец блога может выбрать, чтобы описать себя 👏
 
-      section.main-page__theme-list
+      section.articles-category__theme-list
         h2.visually-hidden Список тем
         ul.themes
 

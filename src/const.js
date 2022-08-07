@@ -109,7 +109,7 @@ const LIMIT_ARTICLES = 8;
 const LIMIT_COMMENTS = 4;
 
 
-const ADMIN_ID = 4;
+const ADMIN_ID = 1;
 
 
 const NOT_DROP_CATEGORY_MESSAGE = `cannot be deleted. there are articles in this category`;

@@ -14,7 +14,8 @@ const ArticleRoute = {
   ADD: `/add`,
   EDIT: `/edit/:id`,
   ID: `/:id`,
-  COMMENTS: `/:id/comments`
+  COMMENTS: `/:id/comments`,
+  BACK: `/back`
 };
 
 const UPLOAD_DIR = `articles`;
@@ -110,6 +111,7 @@ articlesRouter.get(ArticleRoute.EDIT, adminMiddleware, csrfProtection, asyncHand
 articlesRouter.get(ArticleRoute.ID, csrfProtection, asyncHandlerWrapper(async (req, res) => {
   const {user} = req.session;
   const {id} = req.params;
+  const back = req.header(`Referer`) || `/`;
 
   const errors = getErrorsFromQuery(req);
 
@@ -125,10 +127,8 @@ articlesRouter.get(ArticleRoute.ID, csrfProtection, asyncHandlerWrapper(async (r
   const article = {...rawArticle, date: getDate(rawArticle.createdAt, ARTICLE_DATE_FORMAT)};
   const comments = rawComments.map((item) => ({...item, date: getDate(item.createdAt, ARTICLE_DATE_FORMAT)}));
 
-  res.render(Template.POST_DETAIL, {article, categories, comments, errors, user, csrfToken: req.csrfToken()});
+  res.render(Template.POST_DETAIL, {article, categories, comments, errors, user, csrfToken: req.csrfToken(), back});
 }));
-
-module.exports = articlesRouter;
 
 
 articlesRouter.post(ArticleRoute.COMMENTS, upload.single(`upload`), csrfProtection, async (req, res) => {
@@ -149,3 +149,4 @@ articlesRouter.post(ArticleRoute.COMMENTS, upload.single(`upload`), csrfProtecti
 
 });
 
+module.exports = articlesRouter;

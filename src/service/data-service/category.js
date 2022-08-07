@@ -37,7 +37,13 @@ module.exports = class CategoryService {
       include: [{
         model: this._ArticleCategories,
         as: Aliase.ARTICLE_CATEGORIES,
-        attributes: []
+        attributes: [],
+        where: {
+          ArticleId: {
+            [Sequelize.Op.ne]: null
+          }
+
+        }
       }]
     });
 
