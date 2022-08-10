@@ -106,19 +106,26 @@ const JoiMessageKey = {
 };
 
 const LIMIT_ARTICLES = 8;
+const LIMIT_TOP_ARTICLES = 4;
+
 const LIMIT_COMMENTS = 4;
 
 
-const ADMIN_ID = 1;
+const ADMIN_ID = 4;
 
 
 const NOT_DROP_CATEGORY_MESSAGE = `cannot be deleted. there are articles in this category`;
 
+const SocketEvent = {
+  ARTICLE_CREATE: `article:create`
+};
+
 module.exports = {
   ID_LENGTH, DATE_FORMAT, ARTICLE_DATE_FORMAT, WRITE_FILE_NAME,
-  LIMIT_ARTICLES, LIMIT_COMMENTS,
+  LIMIT_ARTICLES, LIMIT_COMMENTS, LIMIT_TOP_ARTICLES,
   Template, ExitCode, PublicationCount, TextCount, PublicationDate, Command, FilePath, HttpCode, ServerRoute, Env,
   Aliase,
   JoiMessageKey, ADMIN_ID,
-  NOT_DROP_CATEGORY_MESSAGE
+  NOT_DROP_CATEGORY_MESSAGE,
+  SocketEvent
 };

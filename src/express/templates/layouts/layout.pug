@@ -12,5 +12,9 @@ head
   link(rel='stylesheet' href='/css/style.min.css')
 body
   block content
+  include ../blocks/top-article-template
   script(src='/js/vendor.js')
   script(src='/js/main.js')
+  script(src='https://cdn.socket.io/4.5.1/socket.io.js')
+  script(src='/js/socket.js')
+

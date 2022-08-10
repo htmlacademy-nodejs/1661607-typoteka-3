@@ -1,7 +1,7 @@
 'use strict';
 
 const {Op, QueryTypes} = require(`sequelize`);
-const {Aliase} = require(`../../const`);
+const {Aliase, ADMIN_ID} = require(`../../const`);
 
 
 module.exports = class ArticleService {
@@ -14,7 +14,7 @@ module.exports = class ArticleService {
 
 
   async create(data) {
-    const article = await this._Article.create(data);
+    const article = await this._Article.create({...data, userId: ADMIN_ID});
     await article.addCategories(data.categories);
     return article.get();
   }
@@ -36,7 +36,7 @@ module.exports = class ArticleService {
       const articles = await this._sequelize.query(
           `
           SELECT articles.title, articles.id, COUNT(comments.id) FROM articles
-          JOIN comments ON "comments"."articleId" = articles.id
+          LEFT JOIN comments ON "comments"."articleId" = articles.id
           GROUP BY articles.title, articles.id
           ORDER BY count DESC
           LIMIT :limit
