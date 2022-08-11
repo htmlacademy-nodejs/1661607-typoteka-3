@@ -14,7 +14,17 @@ module.exports = class ArticleService {
 
 
   async create(data) {
-    const article = await this._Article.create({...data, userId: ADMIN_ID});
+    console.log(`article - 0`);
+
+    const x = {...data, userId: ADMIN_ID};
+
+    console.log(x, `x`);
+
+    const article = await this._Article.create(data);
+    // const article = await this._Article.create({...data, userIds: ADMIN_ID});
+
+    console.log(x, `y`);
+
     await article.addCategories(data.categories);
     return article.get();
   }

@@ -13,7 +13,7 @@ const initDB = async (sequelize, {categories, articles, users}) => {
 
   const userModels = await User.bulkCreate(users, {include: [Aliase.COMMENTS, Aliase.ARTICLES]});
 
-  const categoryIdByName = categoryModels.reduce((acc, item) => ({[item.name]: item.id, ...acc}), {}); // [{it: 1}, {games: 2},...]
+  const categoryIdByName = categoryModels.reduce((acc, item) => ({[item.name]: item.id, ...acc}), {});
 
   const userIdByEmail = userModels.reduce((acc, item) => ({[item.email]: item.id, ...acc}), {});
 

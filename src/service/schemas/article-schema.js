@@ -35,5 +35,6 @@ exports.articleSchema = Joi.object({
         [JoiMessageKey.NUMBER_BASE]: Message.CATEGORIES
       })
   ),
-  comments: Joi.array().optional()
+  comments: Joi.array().optional(),
+  userId: Joi.number().integer()
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-const {Router} = require(`express`);
+const {Router, request} = require(`express`);
 const {Template, ARTICLE_DATE_FORMAT} = require(`../../const`);
 const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader, adminMiddleware, redirectWithErrors, getErrorsFromQuery} = require(`../../utils`);
 const api = require(`../api`);
@@ -34,13 +34,15 @@ const articlesRouter = new Router();
 
 articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), csrfProtection, async (req, res) => {
   const {body, file} = req;
+  const {user} = req.session;
   const {title, announce, fullText, category} = body;
 
   const articleData = {
     picture: file ? file.filename : ``,
     title, announce, fullText,
     categories: ensureArray(category),
-    comments: []
+    comments: [],
+    userId: user.id
   };
 
   try {
