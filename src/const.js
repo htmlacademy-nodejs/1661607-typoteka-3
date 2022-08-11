@@ -117,8 +117,10 @@ const ADMIN_ID = 4;
 const NOT_DROP_CATEGORY_MESSAGE = `cannot be deleted. there are articles in this category`;
 
 const SocketEvent = {
-  ARTICLE_CREATE: `article:create`
+  ARTICLE_CHANGE: `article:change`,
+  COMMENT_CHANGE: `comment:change`
 };
+
 
 module.exports = {
   ID_LENGTH, DATE_FORMAT, ARTICLE_DATE_FORMAT, WRITE_FILE_NAME,

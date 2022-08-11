@@ -5,7 +5,6 @@ mixin createMyArticle(date, title, id)
   li.notes__list-item
     time.notes__item-time(datetime= date)= date
     a.notes__item-text(href=`/articles/${id}`)= title
-    //- button.notes__button.button.button--close-item(type='button')
     a.notes__button.button.button--close-item(href= `/my/articles-delete/${id}`)
 
       span.visually-hidden Закрыть строку списка

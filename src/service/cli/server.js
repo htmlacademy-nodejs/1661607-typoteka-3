@@ -2,7 +2,6 @@
 
 const express = require(`express`);
 const http = require(`http`);
-const {red, green} = require(`chalk`);
 const helmet = require(`helmet`);
 const {getLogger} = require(`../lib/logger`);
 const socket = require(`../lib/socket`);
@@ -63,11 +62,7 @@ exports.server = {
 
 
     const port = +arg || DEFAULT_PORT;
-    // app.listen(port)
-    //   .on(`listening`, () => {
-    //     logger.info(green(`data server: Ожидаю соединений на ${port}`));
-    //   })
-    //   .on(`error`, ({message}) => logger.error(red(`data server: Ошибка при создании сервера, ${message}`)));
+
 
     try {
       server.listen(port, (err) => {

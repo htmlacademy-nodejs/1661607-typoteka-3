@@ -119,8 +119,6 @@ describe(`API creates user if data is not valid`, () => {
   });
 });
 
-// //
-
 
 describe(`API authenticate user if data is valid`, () => {
   const validAuthData = {

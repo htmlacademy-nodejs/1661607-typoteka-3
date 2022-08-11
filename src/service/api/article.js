@@ -2,7 +2,7 @@
 
 
 const {Router} = require(`express`);
-const {HttpCode, ServerRoute, SocketEvent, LIMIT_TOP_ARTICLES} = require(`../../const`);
+const {HttpCode, ServerRoute, SocketEvent, LIMIT_TOP_ARTICLES, LIMIT_COMMENTS} = require(`../../const`);
 const {asyncHandlerWrapper} = require(`../../utils`);
 const addArticleToLocals = require(`../middleware/add-article-to-locals`);
 const validateArticle = require(`../middleware/validate-article`);
@@ -16,6 +16,11 @@ const ArticlesRoute = {
   COMMENTS_IN_ARTICLE: `/:articleId/comments`,
   COMMENTS: `/comments`,
   COMMENT_BY_ID: `/comments/:commentId`,
+};
+
+const emit = (req, eventName, data) => {
+  const {io} = req.app.locals;
+  io.emit(eventName, data);
 };
 
 
@@ -61,19 +66,12 @@ module.exports = (apiRouter, articleService, commentService) => {
     return res.status(HttpCode.OK).json(article);
   }));
 
-  const emit = (req, eventName, data) => {
-    const {io} = req.app.locals;
-    console.log(`---------------------------------------------io`);
-    io.emit(eventName, data);
-  };
 
   articleRouter.post(ArticlesRoute.MAIN, validateArticle, asyncHandlerWrapper(async (req, res) => {
     const article = await articleService.create(req.body);
 
     const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
-
-    emit(req, SocketEvent.ARTICLE_CREATE, articles);
-    console.log(`-------------------------------------------`, articles);
+    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
 
     return res.status(HttpCode.CREATED).json(article);
   }));
@@ -88,6 +86,10 @@ module.exports = (apiRouter, articleService, commentService) => {
     }
 
     const article = await articleService.update(articleId, oldArticle);
+
+    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
+    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
+
     return res.status(HttpCode.OK).json(article);
   }));
 
@@ -98,6 +100,9 @@ module.exports = (apiRouter, articleService, commentService) => {
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
+
+    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
+    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
 
     return res.status(HttpCode.OK).json(article);
   }));
@@ -114,6 +119,9 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     const comments = await commentService.create(articleId, req.body);
 
+    const AllComments = await commentService.findAll(LIMIT_COMMENTS);
+    emit(req, SocketEvent.COMMENT_CHANGE, AllComments);
+
     return res.status(HttpCode.CREATED).json(comments);
   }));
 
@@ -126,6 +134,9 @@ module.exports = (apiRouter, articleService, commentService) => {
     if (!comment) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found comment with ${commentId}`);
     }
+
+    const AllComments = await commentService.findAll(LIMIT_COMMENTS);
+    emit(req, SocketEvent.COMMENT_CHANGE, AllComments);
 
     return res.status(HttpCode.OK).json(comment);
   }));

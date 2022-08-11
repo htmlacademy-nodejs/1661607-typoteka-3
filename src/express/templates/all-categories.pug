@@ -5,12 +5,8 @@ mixin createCategory(category)
     form(action= `/my/categories-edit/${category.id}` method='POST')
       input(type="hidden" name="_csrf" value=csrfToken)
       input#modify-form-category-1(type='text' name="name" value= category.name)
-      //- label(for='modify-form-category-1')
-      //-   span.visually-hidden Редактировать категорию
       button.category__button.button.button--category(type='submit') Сохранить
       a.category__button.button.button--category(href= `/my/categories-delete/${category.id}`) Удалить
-      //- button.category__button.button.button--category(type='submit') Сохранить
-      //- button.category__button.button.button--category(type='button') Удалить
 
 
 block headerContent
