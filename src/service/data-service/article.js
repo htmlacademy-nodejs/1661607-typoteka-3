@@ -1,7 +1,7 @@
 'use strict';
 
 const {Op, QueryTypes} = require(`sequelize`);
-const {Aliase, ADMIN_ID} = require(`../../const`);
+const {Aliase} = require(`../../const`);
 
 
 module.exports = class ArticleService {
@@ -14,17 +14,7 @@ module.exports = class ArticleService {
 
 
   async create(data) {
-    console.log(`article - 0`);
-
-    const x = {...data, userId: ADMIN_ID};
-
-    console.log(x, `x`);
-
     const article = await this._Article.create(data);
-    // const article = await this._Article.create({...data, userIds: ADMIN_ID});
-
-    console.log(x, `y`);
-
     await article.addCategories(data.categories);
     return article.get();
   }
@@ -41,7 +31,6 @@ module.exports = class ArticleService {
 
   async findPage({limit, offset, categoryId, top}) {
 
-
     if (top) {
       const articles = await this._sequelize.query(
           `
@@ -55,6 +44,7 @@ module.exports = class ArticleService {
             replacements: {limit: top},
             type: QueryTypes.SELECT
           });
+
       return articles;
     }
 

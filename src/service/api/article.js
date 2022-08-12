@@ -97,11 +97,13 @@ module.exports = (apiRouter, articleService, commentService) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
 
+
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
 
     const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
+
     emit(req, SocketEvent.ARTICLE_CHANGE, articles);
 
     return res.status(HttpCode.OK).json(article);

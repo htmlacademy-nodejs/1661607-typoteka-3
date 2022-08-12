@@ -1,6 +1,6 @@
 'use strict';
 
-const {Router, request} = require(`express`);
+const {Router} = require(`express`);
 const {Template, ARTICLE_DATE_FORMAT} = require(`../../const`);
 const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader, adminMiddleware, redirectWithErrors, getErrorsFromQuery} = require(`../../utils`);
 const api = require(`../api`);
