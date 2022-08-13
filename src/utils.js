@@ -88,11 +88,6 @@ const createPublicationList = async (count) => {
 };
 
 
-const render = (template, content) => (req, res) => res.render(template, content);
-
-const checkFields = (needFields, fields) => needFields.every((field) => fields.includes(field));
-
-
 const connectToDB = async (sequelize, logger) => {
   try {
     logger.info(`trying to connect to DB`);
@@ -170,8 +165,7 @@ module.exports = {
   shuffle, getRandomInt,
   createPublicationList,
   createText, createTitle, getTextListFromFile, createRandomArray,
-  render,
-  checkFields, getFormatDate, getDate,
+  getFormatDate, getDate,
   connectToDB,
   asyncHandlerWrapper,
   prepareErrors, validateData, adminMiddleware,
