@@ -41,17 +41,7 @@ const createAPI = async () => {
 };
 
 
-// const createAPI = async () => {
-//   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-//   await initDB(mockDB, {articles: MOCK_ARTICLES, categories: CATEGORIES, users: MOCK_USERS});
-//   const app = express();
-//   app.use(express.json());
-//   article(app, new ArticleService(mockDB), new CommentService(mockDB));
-//   return app;
-// };
-
 describe(`API returns a list of articles`, () => {
-
 
   let response;
 
