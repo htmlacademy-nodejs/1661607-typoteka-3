@@ -60,6 +60,7 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), csrfProtection, a
 
 
 articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), csrfProtection, async (req, res) => {
+  const {user} = req.session;
   const {id} = req.params;
   const {body, file} = req;
   const {title, announce, fullText, category, comments} = body;
@@ -67,7 +68,8 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), csrfProtection, 
     picture: file ? file.filename : body.photo,
     title, announce, fullText,
     categories: ensureArray(category),
-    comments
+    comments,
+    userId: user.id
   };
 
 

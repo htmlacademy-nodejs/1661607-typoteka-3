@@ -3,6 +3,7 @@
 const {Router} = require(`express`);
 const {HttpCode, ServerRoute, NOT_DROP_CATEGORY_MESSAGE} = require(`../../const`);
 const {asyncHandlerWrapper} = require(`../../utils`);
+const checkAdmin = require(`../middleware/check-Admin`);
 const validateCategory = require(`../middleware/validate-category`);
 const validateId = require(`../middleware/validateId`);
 
@@ -19,14 +20,14 @@ module.exports = (apiRouter, service) => {
   }));
 
 
-  categoryRouter.post(`/`, validateCategory, asyncHandlerWrapper(async (req, res) => {
+  categoryRouter.post(`/`, [validateCategory, checkAdmin], asyncHandlerWrapper(async (req, res) => {
 
     const categories = await service.create(req.body);
 
     return res.status(HttpCode.OK).json(categories);
   }));
 
-  categoryRouter.put(`/:id`, [validateCategory, validateId(`id`)], asyncHandlerWrapper(async (req, res) => {
+  categoryRouter.put(`/:id`, [validateCategory, validateId(`id`), checkAdmin], asyncHandlerWrapper(async (req, res) => {
 
     const {id} = req.params;
 
@@ -35,7 +36,7 @@ module.exports = (apiRouter, service) => {
     return res.status(HttpCode.OK).json(categories);
   }));
 
-  categoryRouter.delete(`/:id`, [validateCategory, validateId(`id`)], asyncHandlerWrapper(async (req, res) => {
+  categoryRouter.delete(`/:id`, [validateCategory, validateId(`id`), checkAdmin], asyncHandlerWrapper(async (req, res) => {
 
     const {id} = req.params;
 

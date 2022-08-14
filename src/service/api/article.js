@@ -5,6 +5,7 @@ const {Router} = require(`express`);
 const {HttpCode, ServerRoute, SocketEvent, LIMIT_TOP_ARTICLES, LIMIT_COMMENTS} = require(`../../const`);
 const {asyncHandlerWrapper} = require(`../../utils`);
 const addArticleToLocals = require(`../middleware/add-article-to-locals`);
+const checkAdmin = require(`../middleware/check-Admin`);
 const validateArticle = require(`../middleware/validate-article`);
 const validateComment = require(`../middleware/validate-comment`);
 const validateId = require(`../middleware/validateId`);
@@ -67,7 +68,7 @@ module.exports = (apiRouter, articleService, commentService) => {
   }));
 
 
-  articleRouter.post(ArticlesRoute.MAIN, validateArticle, asyncHandlerWrapper(async (req, res) => {
+  articleRouter.post(ArticlesRoute.MAIN, [validateArticle, checkAdmin], asyncHandlerWrapper(async (req, res) => {
     const article = await articleService.create(req.body);
 
     const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
@@ -76,7 +77,7 @@ module.exports = (apiRouter, articleService, commentService) => {
     return res.status(HttpCode.CREATED).json(article);
   }));
 
-  articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, validateArticle, asyncHandlerWrapper(async (req, res) => {
+  articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, [validateArticle, checkAdmin], asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const oldArticle = req.body;
     const isOldArticle = await articleService.findOne(articleId);
@@ -93,7 +94,7 @@ module.exports = (apiRouter, articleService, commentService) => {
     return res.status(HttpCode.OK).json(article);
   }));
 
-  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, validateId(`articleId`), asyncHandlerWrapper(async (req, res) => {
+  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, [validateId(`articleId`), checkAdmin], asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
 
@@ -128,7 +129,7 @@ module.exports = (apiRouter, articleService, commentService) => {
   }));
 
 
-  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, validateId(`commentId`), asyncHandlerWrapper(async (req, res) => {
+  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, [validateId(`commentId`), checkAdmin], asyncHandlerWrapper(async (req, res) => {
 
     const {commentId} = req.params;
     const comment = await commentService.drop(commentId);

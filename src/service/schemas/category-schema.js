@@ -13,6 +13,8 @@ exports.categorySchema = Joi.object({
   name: Joi.string().min(5).max(30).messages({
     [JoiMessageKey.STRING_MIN]: Message.MIN,
     [JoiMessageKey.STRING_MAX]: Message.MAX
-  })
+  }),
+  userId: Joi.number().integer()
+
 });
 

@@ -151,7 +151,7 @@ const getStringQuery = (rout, query) => `${rout}?${new URLSearchParams(query).to
 
 const redirectWithErrors = (res, err, url) => {
   const errors = {err: err.response.data};
-  const redirectUrl = getStringQuery(url, errors);
+  const redirectUrl = getStringQuery(url || `/`, errors);
   res.redirect(redirectUrl);
 };
 
