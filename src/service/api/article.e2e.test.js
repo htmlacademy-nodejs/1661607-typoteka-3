@@ -11,7 +11,7 @@ const article = require(`./article`);
 const ArticleService = require(`../data-service/article`);
 const CommentService = require(`../data-service/comment`);
 const {MOCK_ARTICLES, CATEGORIES, MOCK_USERS} = require(`../../tests/mocks`);
-const {ServerRoute, HttpCode} = require(`../../const`);
+const {ServerRoute, HttpCode, ADMIN_ID} = require(`../../const`);
 const initDB = require(`../lib/init-db`);
 const socket = require(`../lib/socket`);
 
@@ -165,7 +165,8 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
 describe(`API changes existent article`, () => {
 
-  const newArticle = {...protoArticle};
+  const newArticle = {...protoArticle, userId: ADMIN_ID};
+
 
   let response;
   let app;
@@ -179,7 +180,7 @@ describe(`API changes existent article`, () => {
 
   // ?? меняет, но вылетает с 500 ??  - тест падает, когда в data-service  await articleService.findPage({top: 4}); - вне теста все работает
   // test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-  console.log(response);
+  console.log(`response`, response);
 
   test(`article is really changed`, () => request(app)
     .get(`${ServerRoute.ARTICLES}/${1}`)
@@ -193,7 +194,7 @@ test(`API returns status code 404 when trying to change non-existent article`, a
 
   const app = await createAPI();
 
-  const validArticle = {...protoArticle};
+  const validArticle = {...protoArticle, userId: ADMIN_ID};
 
   return request(app)
     .put(`${ServerRoute.ARTICLES}/FAKE_ID`)
@@ -222,7 +223,8 @@ describe(`API correctly deletes an article`, () => {
   beforeAll(async () => {
     app = await createAPI();
     response = await request(app)
-      .delete(`${ServerRoute.ARTICLES}/${1}`);
+      .delete(`${ServerRoute.ARTICLES}/${1}`)
+      .send({userId: ADMIN_ID});
   });
 
   // ... как и предыдущий
@@ -320,14 +322,13 @@ test(`API refuses to create a comment when data is invalid, and returns status c
 
 describe(`API correctly deletes a comment`, () => {
 
-
   let response;
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
     response = await request(app)
-      .delete(firstComment);
+      .delete(firstComment).send({userId: ADMIN_ID});
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));

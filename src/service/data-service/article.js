@@ -39,7 +39,8 @@ module.exports = class ArticleService {
           GROUP BY articles.title, articles.id
           ORDER BY count DESC
           LIMIT :limit
-          `,
+          `
+          ,
           {
             replacements: {limit: top},
             type: QueryTypes.SELECT
@@ -90,6 +91,8 @@ module.exports = class ArticleService {
 
 
   async update(id, article) {
+    delete article.userId; // без этого почемуу-то не проходит тест
+
     const affectedRows = await this._Article.update(article, {where: {id}});
 
     const updatedArticle = await this._Article.findOne({where: {id}});

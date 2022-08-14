@@ -68,7 +68,7 @@ module.exports = (apiRouter, articleService, commentService) => {
   }));
 
 
-  articleRouter.post(ArticlesRoute.MAIN, [validateArticle, checkAdmin], asyncHandlerWrapper(async (req, res) => {
+  articleRouter.post(ArticlesRoute.MAIN, [validateArticle], asyncHandlerWrapper(async (req, res) => {
     const article = await articleService.create(req.body);
 
     const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
@@ -78,9 +78,14 @@ module.exports = (apiRouter, articleService, commentService) => {
   }));
 
   articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, [validateArticle, checkAdmin], asyncHandlerWrapper(async (req, res) => {
+    // console.log(`put ----------------------`, req.body);
     const {articleId} = req.params;
+    // console.log(`articleId ----------------------`, articleId);
+
     const oldArticle = req.body;
     const isOldArticle = await articleService.findOne(articleId);
+    // console.log(`isOldArticle ----------------------`, isOldArticle);
+
 
     if (!isOldArticle) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
@@ -88,8 +93,14 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     const article = await articleService.update(articleId, oldArticle);
 
+    console.log(`article ----------------------`, article);
+
+
     const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
+    console.log(`emit articles ----------------------`, articles);
+
     emit(req, SocketEvent.ARTICLE_CHANGE, articles);
+
 
     return res.status(HttpCode.OK).json(article);
   }));
@@ -143,6 +154,4 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     return res.status(HttpCode.OK).json(comment);
   }));
-
-
 };

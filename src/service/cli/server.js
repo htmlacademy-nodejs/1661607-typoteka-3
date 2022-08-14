@@ -63,18 +63,12 @@ exports.server = {
 
     const port = +arg || DEFAULT_PORT;
 
-
-    try {
-      server.listen(port, (err) => {
-        if (err) {
-          return logger.error(`An error occurred on server creation: ${err.message}`);
-        }
-        return logger.info(`Listening to connections on ${port}`);
-      });
-    } catch (err) {
-      logger.error(`An error occurred: ${err.message}`);
-      process.exit(1);
-    }
+    server.listen(port, (err) => {
+      if (err) {
+        return logger.error(`An error occurred on server creation: ${err.message}`);
+      }
+      return logger.info(`Listening to connections on ${port}`);
+    });
   }
 };
 
