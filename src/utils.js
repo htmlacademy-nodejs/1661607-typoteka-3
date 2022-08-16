@@ -149,6 +149,11 @@ const adminMiddleware = (req, res, next) => {
 
 const getStringQuery = (rout, query) => `${rout}?${new URLSearchParams(query).toString()}`;
 
+const emit = (req, eventName, data) => {
+  const {io} = req.app.locals;
+  io.emit(eventName, data);
+};
+
 const redirectWithErrors = (res, err, url) => {
   const errors = {err: err.response.data};
   const redirectUrl = getStringQuery(url || `/`, errors);
@@ -170,5 +175,6 @@ module.exports = {
   asyncHandlerWrapper,
   prepareErrors, validateData, adminMiddleware,
   createImageUploader,
-  getStringQuery, redirectWithErrors, getErrorsFromQuery
+  getStringQuery, redirectWithErrors, getErrorsFromQuery,
+  emit
 };

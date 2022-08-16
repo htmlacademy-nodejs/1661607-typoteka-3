@@ -3,7 +3,7 @@ extends ./layouts/wrapper-color
 mixin createComment(comment)
   li.publication__list-item
     .publication__header
-      img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
+      img.publication__list-image(src=`/img/avatars/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
       b.publication__list-name= `${comment.users.firstName} ${comment.users.lastName}`
       time.publication__item-time(datetime= comment.date)= comment.date
     a.publication__item-text(href= `/articles/${comment.articles.id}`)= comment.articles.title

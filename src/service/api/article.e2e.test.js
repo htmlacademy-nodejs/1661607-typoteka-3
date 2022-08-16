@@ -4,7 +4,6 @@
 const express = require(`express`);
 const request = require(`supertest`);
 const Sequelize = require(`sequelize`);
-const http = require(`http`);
 
 
 const article = require(`./article`);
@@ -13,7 +12,6 @@ const CommentService = require(`../data-service/comment`);
 const {MOCK_ARTICLES, CATEGORIES, MOCK_USERS} = require(`../../tests/mocks`);
 const {ServerRoute, HttpCode, ADMIN_ID} = require(`../../const`);
 const initDB = require(`../lib/init-db`);
-const socket = require(`../lib/socket`);
 
 
 const mockArticle = MOCK_ARTICLES[0];
@@ -33,8 +31,6 @@ const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   await initDB(mockDB, {articles: MOCK_ARTICLES, categories: CATEGORIES, users: MOCK_USERS});
   const app = express();
-  const server = http.createServer(app);
-  app.locals.io = socket(server);
   app.use(express.json());
   article(app, new ArticleService(mockDB), new CommentService(mockDB));
   return app;
@@ -178,9 +174,7 @@ describe(`API changes existent article`, () => {
       .send(newArticle);
   });
 
-  // ?? меняет, но вылетает с 500 ??  - тест падает, когда в data-service  await articleService.findPage({top: 4}); - вне теста все работает
-  // test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-  console.log(`response`, response);
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`article is really changed`, () => request(app)
     .get(`${ServerRoute.ARTICLES}/${1}`)
@@ -227,16 +221,13 @@ describe(`API correctly deletes an article`, () => {
       .send({userId: ADMIN_ID});
   });
 
-  // ... как и предыдущий
-  // test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-  console.log(response);
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
 
   test(`article count is 4 now`, () => request(app)
     .get(ServerRoute.ARTICLES)
     .expect((res) => expect(res.body.articles.length).toBe(4))
   );
-
 });
 
 test(`API refuses to delete non-existent article`, async () => {

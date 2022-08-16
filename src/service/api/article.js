@@ -2,7 +2,7 @@
 
 
 const {Router} = require(`express`);
-const {HttpCode, ServerRoute, SocketEvent, LIMIT_TOP_ARTICLES, LIMIT_COMMENTS} = require(`../../const`);
+const {HttpCode, ServerRoute} = require(`../../const`);
 const {asyncHandlerWrapper} = require(`../../utils`);
 const addArticleToLocals = require(`../middleware/add-article-to-locals`);
 const checkAdmin = require(`../middleware/check-Admin`);
@@ -17,11 +17,6 @@ const ArticlesRoute = {
   COMMENTS_IN_ARTICLE: `/:articleId/comments`,
   COMMENTS: `/comments`,
   COMMENT_BY_ID: `/comments/:commentId`,
-};
-
-const emit = (req, eventName, data) => {
-  const {io} = req.app.locals;
-  io.emit(eventName, data);
 };
 
 
@@ -70,37 +65,20 @@ module.exports = (apiRouter, articleService, commentService) => {
 
   articleRouter.post(ArticlesRoute.MAIN, [validateArticle], asyncHandlerWrapper(async (req, res) => {
     const article = await articleService.create(req.body);
-
-    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
-    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
-
     return res.status(HttpCode.CREATED).json(article);
   }));
 
   articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, [validateArticle, checkAdmin], asyncHandlerWrapper(async (req, res) => {
-    // console.log(`put ----------------------`, req.body);
     const {articleId} = req.params;
-    // console.log(`articleId ----------------------`, articleId);
 
     const oldArticle = req.body;
     const isOldArticle = await articleService.findOne(articleId);
-    // console.log(`isOldArticle ----------------------`, isOldArticle);
-
 
     if (!isOldArticle) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
 
     const article = await articleService.update(articleId, oldArticle);
-
-    console.log(`article ----------------------`, article);
-
-
-    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
-    console.log(`emit articles ----------------------`, articles);
-
-    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
-
 
     return res.status(HttpCode.OK).json(article);
   }));
@@ -109,14 +87,10 @@ module.exports = (apiRouter, articleService, commentService) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
 
-
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
 
-    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
-
-    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
 
     return res.status(HttpCode.OK).json(article);
   }));
@@ -133,9 +107,6 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     const comments = await commentService.create(articleId, req.body);
 
-    const AllComments = await commentService.findAll(LIMIT_COMMENTS);
-    emit(req, SocketEvent.COMMENT_CHANGE, AllComments);
-
     return res.status(HttpCode.CREATED).json(comments);
   }));
 
@@ -148,9 +119,6 @@ module.exports = (apiRouter, articleService, commentService) => {
     if (!comment) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found comment with ${commentId}`);
     }
-
-    const AllComments = await commentService.findAll(LIMIT_COMMENTS);
-    emit(req, SocketEvent.COMMENT_CHANGE, AllComments);
 
     return res.status(HttpCode.OK).json(comment);
   }));

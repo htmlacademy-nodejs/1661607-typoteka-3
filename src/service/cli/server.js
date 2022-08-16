@@ -1,10 +1,10 @@
 'use strict';
 
 const express = require(`express`);
-const http = require(`http`);
+// const http = require(`http`);
 const helmet = require(`helmet`);
 const {getLogger} = require(`../lib/logger`);
-const socket = require(`../lib/socket`);
+// const socket = require(`../lib/socket`);
 const sequelize = require(`../lib/sequelize`);
 const {Command, HttpCode} = require(`../../const`);
 const {runRouter} = require(`../api`);
@@ -25,9 +25,9 @@ exports.server = {
 
     const app = express();
 
-    const server = http.createServer(app);
+    // const server = http.createServer(app);
 
-    app.locals.io = socket(server);
+    // app.locals.io = socket(server);
 
 
     app.use(helmet({
@@ -63,12 +63,22 @@ exports.server = {
 
     const port = +arg || DEFAULT_PORT;
 
-    server.listen(port, (err) => {
-      if (err) {
-        return logger.error(`An error occurred on server creation: ${err.message}`);
-      }
-      return logger.info(`Listening to connections on ${port}`);
-    });
+    // app.listen(port)
+    // .on(`listening`, () => {
+    //   logger.info((`data server: Ожидаю соединений на ${port}`));
+    // })
+    // .on(`error`, ({message}) => logger.error((`data server: Ошибка при создании сервера, ${message}`)));
+
+    app.listen(port)
+      .on(`listening`, () => logger.info(`data server: Ожидаю соединений на ${port}`))
+      .on(`error`, ({message}) => logger.error(`data server: Ошибка при создании сервера, ${message}`));
+
+    // server.listen(port, (err) => {
+    //   if (err) {
+    //     return logger.error(`An error occurred on server creation: ${err.message}`);
+    //   }
+    //   return logger.info(`Listening to connections on ${port}`);
+    // });
   }
 };
 

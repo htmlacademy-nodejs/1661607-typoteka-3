@@ -11,7 +11,11 @@ const {HttpCode, Template} = require(`../const`);
 const {getLogger} = require(`../service/lib/logger`);
 const sequelize = require(`../service/lib/sequelize`);
 
+const {Server} = require(`socket.io`);
+const http = require(`http`);
+
 const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
+
 
 const PORT = 8080;
 
@@ -28,6 +32,10 @@ const StaticDirName = {
 
 
 const app = express();
+
+const server = http.createServer(app);
+
+app.locals.io = new Server(server);
 
 const logger = getLogger({name: `client-api`});
 const mySessionStore = new SequelizeStore({
@@ -76,6 +84,6 @@ app.use((error, req, res, _next) => {
   return res.render(Template.ERR_500, {error, user});
 });
 
-app.listen(PORT)
+server.listen(PORT)
   .on(`listening`, () => console.info(green(`front server: Ожидаю соединений на ${PORT}`)))
   .on(`error`, ({message}) => console.error(red(`front server: Ошибка при создании сервера, ${message}`)));

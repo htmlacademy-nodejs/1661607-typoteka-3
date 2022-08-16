@@ -1,8 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {Template, ARTICLE_DATE_FORMAT} = require(`../../const`);
-const {asyncHandlerWrapper, adminMiddleware, getDate, redirectWithErrors, getErrorsFromQuery} = require(`../../utils`);
+const {Template, ARTICLE_DATE_FORMAT, SocketEvent, LIMIT_TOP_ARTICLES, LIMIT_COMMENTS} = require(`../../const`);
+const {asyncHandlerWrapper, adminMiddleware, getDate, redirectWithErrors, getErrorsFromQuery, emit} = require(`../../utils`);
 const api = require(`../api`);
 
 const csrf = require(`csurf`);
@@ -34,6 +34,10 @@ myRouter.get(MyRoute.ARTICLE_DELETE, adminMiddleware, csrfProtection, (async (re
   const {id} = req.params;
   try {
     await api.deleteArticle(id, userId);
+
+    const articles = await api.getAllArticles({top: LIMIT_TOP_ARTICLES});
+    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
+
     res.redirect(`/my`);
   } catch (err) {
 
@@ -59,6 +63,10 @@ myRouter.get(MyRoute.COMMENTS_DELETE, adminMiddleware, csrfProtection, (async (r
 
   try {
     await api.deleteComment(id, userId);
+
+    const comments = await api.getAllComments(LIMIT_COMMENTS);
+    emit(req, SocketEvent.COMMENT_CHANGE, comments);
+
     res.redirect(`/my/comments`);
   } catch (err) {
     redirectWithErrors(res, err, `/my/comments`);
