@@ -38,7 +38,7 @@ block mainContent
                       input.visually-hidden(type='file' name='upload')
                       | Обзор
                 .new-publication__category-wrapper
-                  a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
+                  a.new-publication__form-link.button.button--transparent(href='/my/categories') Добавить категорию
 
                   each category in categories
                     +createCategory(category.name, category.id, category.checked)
