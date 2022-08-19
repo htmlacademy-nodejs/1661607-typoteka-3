@@ -51,9 +51,6 @@ module.exports = class ArticleService {
 
 
     if (categoryId) {
-
-      // Наверняка можно и одним запросом, но пока не знаю как
-
       const articleIds = await this._Article.findAll({
         include: [{model: this._Category, as: Aliase.CATEGORIES, where: {id: categoryId}}, Aliase.COMMENTS],
       });
@@ -91,7 +88,7 @@ module.exports = class ArticleService {
 
 
   async update(id, article) {
-    delete article.userId; // без этого почемуу-то не проходит тест
+    delete article.userId;
 
     const affectedRows = await this._Article.update(article, {where: {id}});
 

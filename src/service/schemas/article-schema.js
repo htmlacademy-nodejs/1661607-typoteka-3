@@ -10,7 +10,8 @@ const Message = {
   ANNOUNCE_MAX: `you need a maximum of 250 characters in the announce`,
   FULL_TEXT_MAX: `you need a maximum of 1000 characters in the article text`,
   CATEGORIES: `you need at least 1 category`,
-  PICTURE: `the image type is not supported`
+  PICTURE: `the image type is not supported`,
+  USER_ID: `not or bad userId`
 };
 
 
@@ -35,6 +36,6 @@ exports.articleSchema = Joi.object({
         [JoiMessageKey.NUMBER_BASE]: Message.CATEGORIES
       })
   ),
-  comments: Joi.array().optional(),
-  userId: Joi.number().integer()
+  comments: Joi.array().required(),
+  userId: Joi.number().integer(),
 });

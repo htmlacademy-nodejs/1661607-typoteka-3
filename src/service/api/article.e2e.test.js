@@ -74,26 +74,18 @@ describe(`API returns an article with given id`, () => {
 describe(`API creates an article if data is valid`, () => {
 
   const newArticle = {...protoArticle};
-  let response;
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
-
-    response = await request(app)
+    await request(app)
       .post(ServerRoute.ARTICLES)
       .send(newArticle);
   });
 
-
-  // ?? создает, но вылетает с 500 ??  - тест падает, когда в data-service  await article.addCategories(data.categories)
-  // test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
-  console.log(response);
-
-
   test(`articles count is changed`, () => request(app)
     .get(ServerRoute.ARTICLES)
-    .expect((res) => expect(res.body.articles.length).toBe(6))// 6
+    .expect((res) => expect(res.body.articles.length).toBe(6))
   );
 });
 
@@ -104,28 +96,20 @@ describe(`API refuses to create an article if data is invalid`, () => {
     app = await createAPI();
   });
 
-  // падает, видимо, по той же причине
 
-  // test(`Without any required property response code is 400`, async () => {
-  //   const newArticle = {...protoArticle};
-  //   for (const key of Object.keys(newArticle)) {
-  //     if (key === `picture`) {
-  //       const badArticle = {...protoArticle};
-  //       delete badArticle[key];
-  //       await request(app)
-  //         .post(ServerRoute.ARTICLES)
-  //         .send(badArticle)
-  //         .expect(HttpCode.CREATED);
-  //     } else {
-  //       const badArticle = {...protoArticle};
-  //       delete badArticle[key];
-  //       await request(app)
-  //         .post(ServerRoute.ARTICLES)
-  //         .send(badArticle)
-  //         .expect(HttpCode.BAD_REQUEST);
-  //     }
-  //   }
-  // });
+  test(`Without any required property response code is 400`, async () => {
+    const newArticle = {...protoArticle};
+    for (const key of Object.keys(newArticle)) {
+      if (key !== `picture` && key !== `fullText` && key !== `comments`) {
+        const badArticle = {...protoArticle};
+        delete badArticle[key];
+        await request(app)
+          .post(ServerRoute.ARTICLES)
+          .send(badArticle)
+          .expect(HttpCode.BAD_REQUEST);
+      }
+    }
+  });
 
 
   test(`When field type is wrong response code is 400`, async () => {

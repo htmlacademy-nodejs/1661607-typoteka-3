@@ -52,8 +52,6 @@ module.exports = class CategoryService {
 
 
   async drop(id) {
-
-    // ??? не работает  onDelete: `restrict`, поэтому так
     const articles = await this._ArticleCategories.findAll({
       where: {'CategoryId': id}
     });

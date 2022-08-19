@@ -30,6 +30,12 @@ const StaticDirName = {
   UPLOAD: `upload`
 };
 
+const {SECRET_SESSION} = process.env;
+
+if (!SECRET_SESSION) {
+  throw new Error(`SESSION_SECRET environment variable is not defined`);
+}
+
 
 const app = express();
 
@@ -49,7 +55,7 @@ sequelize.sync({force: false});
 app.use(express.urlencoded({extended: false}));
 
 app.use(session({
-  secret: `super_secret`,
+  secret: SECRET_SESSION,
   resave: false,
   saveUninitialized: false,
   store: mySessionStore,
