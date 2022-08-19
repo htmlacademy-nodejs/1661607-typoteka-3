@@ -17,6 +17,14 @@ const http = require(`http`);
 const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 
 
+const getSocket = (server) => new Server(server, {
+  cors: {
+    origins: [`localhost:8080`],
+    methods: [`GET`]
+  }
+});
+
+
 const PORT = 8080;
 
 const RootRoute = {
@@ -41,7 +49,7 @@ const app = express();
 
 const server = http.createServer(app);
 
-app.locals.io = new Server(server);
+app.locals.io = getSocket(server);
 
 const logger = getLogger({name: `client-api`});
 const mySessionStore = new SequelizeStore({

@@ -4,6 +4,12 @@ const Joi = require(`joi`);
 const {JoiMessageKey} = require(`../../const`);
 
 
+const CharacterNumberText = {
+  MIN: 20,
+  MAX: 1000
+};
+
+
 const Message = {
   MIN: `you need at least 20 characters`,
   MAX: `you need a maximum of 1000 characters`,
@@ -12,7 +18,7 @@ const Message = {
 
 
 exports.commentSchema = Joi.object({
-  text: Joi.string().min(20).max(1000).required().messages({
+  text: Joi.string().min(CharacterNumberText.MIN).max(CharacterNumberText.MAX).required().messages({
     [JoiMessageKey.STRING_MIN]: Message.MIN,
     [JoiMessageKey.STRING_MAX]: Message.MAX
   }),

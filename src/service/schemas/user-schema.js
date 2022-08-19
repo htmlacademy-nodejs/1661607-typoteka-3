@@ -10,31 +10,41 @@ const Message = {
   PASSWORD: `you need at least 6 characters in the password`,
   PASSWORD_REPEAT: `the passwords do not match`,
   PICTURE: `the image type is not supported`
-
 };
 
-const NAME_PATTERN = /[^0-9$&+,:;=?@#|'<>.^*()%!]+$/;
+
+const CharacterNumber = {
+  EMAIL: 2,
+  NAME: 2,
+  PASSWORD: 6
+};
+
+
+const Pattern = {
+  NAME: /[^0-9$&+,:;=?@#|'<>.^*()%!]+$/,
+  AVATAR: /.+\.jpg\b|.+\.png\b/
+};
 
 exports.userSchema = Joi.object({
-  email: Joi.string().min(2).email().required().messages({
+  email: Joi.string().min(CharacterNumber.EMAIL).email().required().messages({
     [JoiMessageKey.EMAIL]: Message.EMAIL,
   }),
-  firstName: Joi.string().min(2).regex(NAME_PATTERN).required().messages({
+  firstName: Joi.string().min(CharacterNumber.NAME).regex(Pattern.NAME).required().messages({
     [JoiMessageKey.STRING_MIN]: Message.NAME_MIN,
     [JoiMessageKey.REGEXP]: Message.NAME_BAD,
   }),
-  lastName: Joi.string().min(2).regex(NAME_PATTERN).required().messages({
+  lastName: Joi.string().min(CharacterNumber.NAME).regex(Pattern.NAME).required().messages({
     [JoiMessageKey.STRING_MIN]: Message.NAME_MIN,
     [JoiMessageKey.REGEXP]: Message.NAME_BAD,
   }),
 
-  password: Joi.string().min(6).required().messages({
+  password: Joi.string().min(CharacterNumber.PASSWORD).required().messages({
     [JoiMessageKey.STRING_MIN]: Message.PASSWORD
   }),
   passwordRepeat: Joi.string().valid(Joi.ref(`password`)).required().messages({
     [JoiMessageKey.ANY_ONLY]: Message.PASSWORD_REPEAT
   }),
-  avatar: Joi.string().regex(/.+\.jpg\b|.+\.png\b/).allow(``).message({
+  avatar: Joi.string().regex(Pattern.AVATAR).allow(``).message({
     [JoiMessageKey.REGEXP]: Message.PICTURE
   }),
 });

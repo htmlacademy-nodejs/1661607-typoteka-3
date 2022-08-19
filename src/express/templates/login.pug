@@ -15,10 +15,10 @@ block mainContent
           form(action='/login' method='post')
             .form__field
               label
-                input(type='email' name='email' placeholder='Электронная почта' required)
+                input(type='email' name='email' placeholder='Электронная почта' autocomplete="off"  required)
             .form__field
               label
-                input(type='password' name='password' placeholder='Пароль' required)
+                input(type='password' name='password' placeholder='Пароль' autocomplete="off" required )
 
             include ./blocks/errors
             button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type='submit') Войти
