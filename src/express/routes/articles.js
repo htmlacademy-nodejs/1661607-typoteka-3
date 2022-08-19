@@ -1,8 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {Template, ARTICLE_DATE_FORMAT} = require(`../../const`);
-const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader, adminMiddleware, redirectWithErrors, getErrorsFromQuery} = require(`../../utils`);
+const {Template, ARTICLE_DATE_FORMAT, LIMIT_COMMENTS, SocketEvent, LIMIT_TOP_ARTICLES} = require(`../../const`);
+const {getDate, asyncHandlerWrapper, prepareErrors, createImageUploader, adminMiddleware, redirectWithErrors, getErrorsFromQuery, emit} = require(`../../utils`);
 const api = require(`../api`);
 const {createMainHandler} = require(`./route-utils`);
 
@@ -47,6 +47,10 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), csrfProtection, a
 
   try {
     await api.postArticle(articleData);
+
+    const articles = await api.getAllArticles({top: LIMIT_TOP_ARTICLES});
+    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
+
     res.redirect(`/my`);
   } catch (err) {
     const allCategories = await api.getCategories();
@@ -60,6 +64,7 @@ articlesRouter.post(ArticleRoute.ADD, upload.single(`upload`), csrfProtection, a
 
 
 articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), csrfProtection, async (req, res) => {
+  const {user} = req.session;
   const {id} = req.params;
   const {body, file} = req;
   const {title, announce, fullText, category, comments} = body;
@@ -67,12 +72,17 @@ articlesRouter.post(ArticleRoute.EDIT, upload.single(`upload`), csrfProtection, 
     picture: file ? file.filename : body.photo,
     title, announce, fullText,
     categories: ensureArray(category),
-    comments
+    comments,
+    userId: user.id
   };
 
 
   try {
     await api.putArticle(id, articleData);
+
+    const articles = await api.getAllArticles({top: LIMIT_TOP_ARTICLES});
+    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
+
     res.redirect(`/my`);
   } catch (err) {
 
@@ -142,6 +152,10 @@ articlesRouter.post(ArticleRoute.COMMENTS, upload.single(`upload`), csrfProtecti
 
   try {
     await api.postComment(id, data);
+
+    const AllComments = await api.getAllComments(LIMIT_COMMENTS);
+    emit(req, SocketEvent.COMMENT_CHANGE, AllComments);
+
     res.redirect(`/articles/${id}`);
 
   } catch (err) {

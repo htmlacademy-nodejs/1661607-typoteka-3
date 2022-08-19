@@ -1,6 +1,7 @@
 'use strict';
 
-const SERVER_URL = `http://localhost:3000`;
+const SERVER_URL = `http://localhost:8080`;
+
 
 const SocketEvent = {
   ARTICLE_CHANGE: `article:change`,

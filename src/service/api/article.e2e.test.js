@@ -4,16 +4,14 @@
 const express = require(`express`);
 const request = require(`supertest`);
 const Sequelize = require(`sequelize`);
-const http = require(`http`);
 
 
 const article = require(`./article`);
 const ArticleService = require(`../data-service/article`);
 const CommentService = require(`../data-service/comment`);
 const {MOCK_ARTICLES, CATEGORIES, MOCK_USERS} = require(`../../tests/mocks`);
-const {ServerRoute, HttpCode} = require(`../../const`);
+const {ServerRoute, HttpCode, ADMIN_ID} = require(`../../const`);
 const initDB = require(`../lib/init-db`);
-const socket = require(`../lib/socket`);
 
 
 const mockArticle = MOCK_ARTICLES[0];
@@ -33,8 +31,6 @@ const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   await initDB(mockDB, {articles: MOCK_ARTICLES, categories: CATEGORIES, users: MOCK_USERS});
   const app = express();
-  const server = http.createServer(app);
-  app.locals.io = socket(server);
   app.use(express.json());
   article(app, new ArticleService(mockDB), new CommentService(mockDB));
   return app;
@@ -78,26 +74,18 @@ describe(`API returns an article with given id`, () => {
 describe(`API creates an article if data is valid`, () => {
 
   const newArticle = {...protoArticle};
-  let response;
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
-
-    response = await request(app)
+    await request(app)
       .post(ServerRoute.ARTICLES)
       .send(newArticle);
   });
 
-
-  // ?? создает, но вылетает с 500 ??  - тест падает, когда в data-service  await article.addCategories(data.categories)
-  // test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
-  console.log(response);
-
-
   test(`articles count is changed`, () => request(app)
     .get(ServerRoute.ARTICLES)
-    .expect((res) => expect(res.body.articles.length).toBe(6))// 6
+    .expect((res) => expect(res.body.articles.length).toBe(6))
   );
 });
 
@@ -108,28 +96,20 @@ describe(`API refuses to create an article if data is invalid`, () => {
     app = await createAPI();
   });
 
-  // падает, видимо, по той же причине
 
-  // test(`Without any required property response code is 400`, async () => {
-  //   const newArticle = {...protoArticle};
-  //   for (const key of Object.keys(newArticle)) {
-  //     if (key === `picture`) {
-  //       const badArticle = {...protoArticle};
-  //       delete badArticle[key];
-  //       await request(app)
-  //         .post(ServerRoute.ARTICLES)
-  //         .send(badArticle)
-  //         .expect(HttpCode.CREATED);
-  //     } else {
-  //       const badArticle = {...protoArticle};
-  //       delete badArticle[key];
-  //       await request(app)
-  //         .post(ServerRoute.ARTICLES)
-  //         .send(badArticle)
-  //         .expect(HttpCode.BAD_REQUEST);
-  //     }
-  //   }
-  // });
+  test(`Without any required property response code is 400`, async () => {
+    const newArticle = {...protoArticle};
+    for (const key of Object.keys(newArticle)) {
+      if (key !== `picture` && key !== `fullText` && key !== `comments`) {
+        const badArticle = {...protoArticle};
+        delete badArticle[key];
+        await request(app)
+          .post(ServerRoute.ARTICLES)
+          .send(badArticle)
+          .expect(HttpCode.BAD_REQUEST);
+      }
+    }
+  });
 
 
   test(`When field type is wrong response code is 400`, async () => {
@@ -165,7 +145,8 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
 describe(`API changes existent article`, () => {
 
-  const newArticle = {...protoArticle};
+  const newArticle = {...protoArticle, userId: ADMIN_ID};
+
 
   let response;
   let app;
@@ -177,9 +158,7 @@ describe(`API changes existent article`, () => {
       .send(newArticle);
   });
 
-  // ?? меняет, но вылетает с 500 ??  - тест падает, когда в data-service  await articleService.findPage({top: 4}); - вне теста все работает
-  // test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-  console.log(response);
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`article is really changed`, () => request(app)
     .get(`${ServerRoute.ARTICLES}/${1}`)
@@ -193,7 +172,7 @@ test(`API returns status code 404 when trying to change non-existent article`, a
 
   const app = await createAPI();
 
-  const validArticle = {...protoArticle};
+  const validArticle = {...protoArticle, userId: ADMIN_ID};
 
   return request(app)
     .put(`${ServerRoute.ARTICLES}/FAKE_ID`)
@@ -222,19 +201,17 @@ describe(`API correctly deletes an article`, () => {
   beforeAll(async () => {
     app = await createAPI();
     response = await request(app)
-      .delete(`${ServerRoute.ARTICLES}/${1}`);
+      .delete(`${ServerRoute.ARTICLES}/${1}`)
+      .send({userId: ADMIN_ID});
   });
 
-  // ... как и предыдущий
-  // test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-  console.log(response);
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
 
   test(`article count is 4 now`, () => request(app)
     .get(ServerRoute.ARTICLES)
     .expect((res) => expect(res.body.articles.length).toBe(4))
   );
-
 });
 
 test(`API refuses to delete non-existent article`, async () => {
@@ -320,14 +297,13 @@ test(`API refuses to create a comment when data is invalid, and returns status c
 
 describe(`API correctly deletes a comment`, () => {
 
-
   let response;
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
     response = await request(app)
-      .delete(firstComment);
+      .delete(firstComment).send({userId: ADMIN_ID});
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));

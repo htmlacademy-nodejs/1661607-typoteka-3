@@ -44,8 +44,9 @@ class API {
     return this._load(`${ServerRoute.ARTICLES}/${id}`, {method: `PUT`, data});
   }
 
-  deleteArticle(id) {
-    return this._load(`${ServerRoute.ARTICLES}/${id}`, {method: `DELETE`});
+  deleteArticle(id, userId) {
+    const data = {userId};
+    return this._load(`${ServerRoute.ARTICLES}/${id}`, {method: `DELETE`, data});
   }
 
 
@@ -66,8 +67,10 @@ class API {
     return this._load(`${ServerRoute.ARTICLES}/${id}/comments`, {method: `POST`, data});
   }
 
-  deleteComment(id) {
-    return this._load(`${ServerRoute.COMMENTS}/${id}`, {method: `DELETE`});
+  deleteComment(id, userId) {
+    const data = {userId};
+
+    return this._load(`${ServerRoute.COMMENTS}/${id}`, {method: `DELETE`, data});
   }
 
 
@@ -83,8 +86,9 @@ class API {
     return this._load(`${ServerRoute.CATEGORY}/${id}`, {method: `PUT`, data});
   }
 
-  deleteCategory(id) {
-    return this._load(`${ServerRoute.CATEGORY}/${id}`, {method: `DELETE`});
+  deleteCategory(id, userId) {
+    const data = {userId};
+    return this._load(`${ServerRoute.CATEGORY}/${id}`, {method: `DELETE`, data});
   }
 
   postUser(data) {

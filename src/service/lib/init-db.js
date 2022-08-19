@@ -8,7 +8,7 @@ const initDB = async (sequelize, {categories, articles, users}) => {
   const {Category, Article, User} = defineModels(sequelize);
   await sequelize.sync({force: true});
 
-  const categoryObjects = categories.map((item) => ({name: item})); // [{name: 'xxx'},...]
+  const categoryObjects = categories.map((item) => ({name: item}));
   const categoryModels = await Category.bulkCreate(categoryObjects);
 
   const userModels = await User.bulkCreate(users, {include: [Aliase.COMMENTS, Aliase.ARTICLES]});

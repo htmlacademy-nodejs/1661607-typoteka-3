@@ -2,9 +2,10 @@
 
 
 const {Router} = require(`express`);
-const {HttpCode, ServerRoute, SocketEvent, LIMIT_TOP_ARTICLES, LIMIT_COMMENTS} = require(`../../const`);
+const {HttpCode, ServerRoute} = require(`../../const`);
 const {asyncHandlerWrapper} = require(`../../utils`);
 const addArticleToLocals = require(`../middleware/add-article-to-locals`);
+const checkAdmin = require(`../middleware/check-Admin`);
 const validateArticle = require(`../middleware/validate-article`);
 const validateComment = require(`../middleware/validate-comment`);
 const validateId = require(`../middleware/validateId`);
@@ -16,11 +17,6 @@ const ArticlesRoute = {
   COMMENTS_IN_ARTICLE: `/:articleId/comments`,
   COMMENTS: `/comments`,
   COMMENT_BY_ID: `/comments/:commentId`,
-};
-
-const emit = (req, eventName, data) => {
-  const {io} = req.app.locals;
-  io.emit(eventName, data);
 };
 
 
@@ -67,17 +63,14 @@ module.exports = (apiRouter, articleService, commentService) => {
   }));
 
 
-  articleRouter.post(ArticlesRoute.MAIN, validateArticle, asyncHandlerWrapper(async (req, res) => {
+  articleRouter.post(ArticlesRoute.MAIN, [validateArticle], asyncHandlerWrapper(async (req, res) => {
     const article = await articleService.create(req.body);
-
-    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
-    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
-
     return res.status(HttpCode.CREATED).json(article);
   }));
 
-  articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, validateArticle, asyncHandlerWrapper(async (req, res) => {
+  articleRouter.put(ArticlesRoute.ARTICLE_BY_ID, [validateArticle, checkAdmin], asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
+
     const oldArticle = req.body;
     const isOldArticle = await articleService.findOne(articleId);
 
@@ -87,24 +80,17 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     const article = await articleService.update(articleId, oldArticle);
 
-    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
-    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
-
     return res.status(HttpCode.OK).json(article);
   }));
 
-  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, validateId(`articleId`), asyncHandlerWrapper(async (req, res) => {
+  articleRouter.delete(ArticlesRoute.ARTICLE_BY_ID, [validateId(`articleId`), checkAdmin], asyncHandlerWrapper(async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
-
 
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found article with id = ${articleId}`);
     }
 
-    const articles = await articleService.findPage({top: LIMIT_TOP_ARTICLES});
-
-    emit(req, SocketEvent.ARTICLE_CHANGE, articles);
 
     return res.status(HttpCode.OK).json(article);
   }));
@@ -121,14 +107,11 @@ module.exports = (apiRouter, articleService, commentService) => {
 
     const comments = await commentService.create(articleId, req.body);
 
-    const AllComments = await commentService.findAll(LIMIT_COMMENTS);
-    emit(req, SocketEvent.COMMENT_CHANGE, AllComments);
-
     return res.status(HttpCode.CREATED).json(comments);
   }));
 
 
-  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, validateId(`commentId`), asyncHandlerWrapper(async (req, res) => {
+  articleRouter.delete(ArticlesRoute.COMMENT_BY_ID, [validateId(`commentId`), checkAdmin], asyncHandlerWrapper(async (req, res) => {
 
     const {commentId} = req.params;
     const comment = await commentService.drop(commentId);
@@ -137,11 +120,6 @@ module.exports = (apiRouter, articleService, commentService) => {
       return res.status(HttpCode.NOT_FOUND).send(`Not found comment with ${commentId}`);
     }
 
-    const AllComments = await commentService.findAll(LIMIT_COMMENTS);
-    emit(req, SocketEvent.COMMENT_CHANGE, AllComments);
-
     return res.status(HttpCode.OK).json(comment);
   }));
-
-
 };
